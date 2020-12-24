@@ -1,7 +1,8 @@
 const path = require('path');
+const { backendPathFor } = require('./path-utils');
 
 function getSDLSchemaLocation(apiName) {
-  return path.join('amplify', 'backend', 'api', apiName, 'build', 'schema.graphql');
+  return path.join(backendPathFor('api', apiName, 'build', 'schema.graphql'));
 }
 
 module.exports = getSDLSchemaLocation;

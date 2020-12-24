@@ -28,7 +28,7 @@ export function deleteProjectDir(root: string) {
 }
 
 export function deleteAmplifyDir(root: string) {
-  rimraf.sync(path.join(root, 'amplify'));
+  rimraf.sync(path.join(root, amplifyPathFor());
 }
 
 export function overrideFunctionSrc(root: string, name: string, code: string) {
@@ -74,4 +74,4 @@ export function overrideLayerCodeJava(root: string, layerName: string, functionN
   fs.copySync(srcDir, destDir);
 }
 
-const getPathToFunction = (root: string, funcName: string) => path.join(root, 'amplify', 'backend', 'function', funcName);
+const getPathToFunction = (root: string, funcName: string) => path.join(root, backendPathFor('function', funcName));

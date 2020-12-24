@@ -103,7 +103,7 @@ describe('amplify init', () => {
     await initJSProjectWithProfile(projRoot, {});
 
     // update <projRoot>/amplify/.config/local-env-info.json with nonexisting project path
-    const localEnvPath = path.join(projRoot, 'amplify', '.config', 'local-env-info.json');
+    const localEnvPath = path.join(projRoot, amplifyPathFor('.config', 'local-env-info.json'));
     expect(fs.existsSync(localEnvPath)).toBe(true);
 
     const localEnvData = fs.readJsonSync(localEnvPath);

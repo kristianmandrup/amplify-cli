@@ -1,3 +1,5 @@
+import { backendPathFor } from './path-utils';
+
 const inquirer = require('inquirer');
 const path = require('path');
 const fs = require('fs-extra');
@@ -1164,7 +1166,7 @@ export const checkIfAuthExists = context => {
 };
 
 export const migrate = (context, projectPath, resourceName) => {
-  const resourceDirPath = path.join(projectPath, 'amplify', 'backend', category, resourceName);
+  const resourceDirPath = path.join(projectPath, backendPathFor(category, resourceName));
 
   // Change CFN file
 

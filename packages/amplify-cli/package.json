@@ -89,6 +89,7 @@
     "node-fetch": "^2.6.1",
     "open": "^7.0.0",
     "ora": "^4.0.3",
+    "yargs": "^16.2.0",
     "parse-json": "^5.0.0",
     "progress": "^2.0.3",
     "promise-sequential": "^1.1.1",

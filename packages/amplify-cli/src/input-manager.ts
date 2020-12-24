@@ -7,6 +7,10 @@ import { InputVerificationResult } from './domain/input-verification-result';
 
 export function getCommandLineInput(pluginPlatform: PluginPlatform): Input {
   const result = new Input(process.argv);
+
+  const args = require('yargs').argv;
+  delete args['_'];
+  delete args['$0'];
   /* tslint:disable */
   if (result.argv && result.argv.length > 2) {
     let index = 2;
@@ -57,7 +61,10 @@ export function getCommandLineInput(pluginPlatform: PluginPlatform): Input {
     }
   }
   /* tslint:enable */
-
+  result.options = {
+    ...args,
+    ...result.options,
+  };
   return result;
 }
 

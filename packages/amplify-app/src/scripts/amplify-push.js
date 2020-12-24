@@ -118,7 +118,9 @@ async function run() {
 
   let cloudPush;
 
-  if (!fs.existsSync(`./amplify/.config/local-env-info.json`)) {
+  const localEnvPath = amplifyPathFor('.config', 'local-env-info.json');
+
+  if (!fs.existsSync(localEnvPath)) {
     // init and then push
 
     cloudPush = spawn(amplify, ['init', '--amplify', PROJECT_CONFIG, '--providers', PROVIDER_CONFIG, '--yes'], {

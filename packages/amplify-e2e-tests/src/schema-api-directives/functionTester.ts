@@ -32,7 +32,7 @@ export async function addSimpleFunction(projectDir: string, testModule: any, fun
     'nodejs',
   );
 
-  const amplifyBackendDirPath = path.join(projectDir, 'amplify', 'backend');
+  const amplifyBackendDirPath = path.join(projectDir, backendPathFor());
   const amplifyFunctionIndexFilePath = path.join(amplifyBackendDirPath, 'function', functionName, 'src', 'index.js');
 
   fs.writeFileSync(amplifyFunctionIndexFilePath, testModule[funcName]);
@@ -47,7 +47,7 @@ export function randomizedFunctionName(functionName: string) {
 }
 
 export function updateFunctionNameInSchema(projectDir: string, functionNamePlaceHolder: string, functionName: string) {
-  const backendApiDirPath = path.join(projectDir, 'amplify', 'backend', 'api');
+  const backendApiDirPath = path.join(projectDir, backendPathFor('api'));
   const apiResDirName = fs.readdirSync(backendApiDirPath)[0];
   const amplifySchemaFilePath = path.join(backendApiDirPath, apiResDirName, 'schema.graphql');
 

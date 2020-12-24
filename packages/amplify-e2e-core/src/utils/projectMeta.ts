@@ -17,7 +17,7 @@ function getAmplifyConfigIOSPath(projRoot: string): string {
 }
 
 function getAmplifyDirPath(projRoot: string): string {
-  return path.join(projRoot, 'amplify');
+  return path.join(projRoot, amplifyPathFor());
 }
 
 function getAWSConfigIOSPath(projRoot: string): string {
@@ -25,32 +25,32 @@ function getAWSConfigIOSPath(projRoot: string): string {
 }
 
 function getProjectMeta(projectRoot: string) {
-  const metaFilePath: string = path.join(projectRoot, 'amplify', '#current-cloud-backend', 'amplify-meta.json');
+  const metaFilePath: string = path.join(projectRoot, amplifyPathFor('#current-cloud-backend', 'amplify-meta.json'));
   return JSON.parse(fs.readFileSync(metaFilePath, 'utf8'));
 }
 
 function getProjectTags(projectRoot: string) {
-  const projectTagsFilePath: string = path.join(projectRoot, 'amplify', '#current-cloud-backend', 'tags.json');
+  const projectTagsFilePath: string = path.join(projectRoot, amplifyPathFor('#current-cloud-backend', 'tags.json'));
   return JSON.parse(fs.readFileSync(projectTagsFilePath, 'utf8'));
 }
 
 function getBackendAmplifyMeta(projectRoot: string) {
-  const metaFilePath: string = path.join(projectRoot, 'amplify', 'backend', 'amplify-meta.json');
+  const metaFilePath: string = path.join(projectRoot, backendPathFor('amplify-meta.json'));
   return JSON.parse(fs.readFileSync(metaFilePath, 'utf8'));
 }
 
 function getBackendConfig(projectRoot: string) {
-  const backendFConfigFilePath: string = path.join(projectRoot, 'amplify', 'backend', 'backend-config.json');
+  const backendFConfigFilePath: string = path.join(projectRoot, backendPathFor('backend-config.json'));
   return JSON.parse(fs.readFileSync(backendFConfigFilePath, 'utf8'));
 }
 
 function getCloudBackendConfig(projectRoot: string) {
-  const currentCloudPath: string = path.join(projectRoot, 'amplify', '#current-cloud-backend', 'backend-config.json');
+  const currentCloudPath: string = path.join(projectRoot, amplifyPathFor('#current-cloud-backend', 'backend-config.json'));
   return JSON.parse(fs.readFileSync(currentCloudPath, 'utf8'));
 }
 
 function getTeamProviderInfo(projectRoot: string) {
-  const teamProviderFilePath: string = path.join(projectRoot, 'amplify', 'team-provider-info.json');
+  const teamProviderFilePath: string = path.join(projectRoot, amplifyPathFor('team-provider-info.json'));
   return JSON.parse(fs.readFileSync(teamProviderFilePath, 'utf8'));
 }
 

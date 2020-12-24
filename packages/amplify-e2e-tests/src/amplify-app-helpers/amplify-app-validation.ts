@@ -3,7 +3,7 @@ import * as path from 'path';
 import { pathManager } from 'amplify-cli-core';
 
 function validateProject(projRoot: string, platform: string) {
-  expect(fs.existsSync(path.join(projRoot, 'amplify'))).toBeTruthy();
+  expect(fs.existsSync(path.join(projRoot, amplifyPathFor())).toBeTruthy();
   expect(fs.existsSync(path.join(projRoot, '.gitignore'))).toBeTruthy();
   switch (platform) {
     case 'android':
@@ -24,7 +24,7 @@ function validateProject(projRoot: string, platform: string) {
 }
 
 function validateProjectConfig(projRoot: string, platform: string, framework?: string) {
-  const configPath = path.join(projRoot, 'amplify', '.config', 'project-config.json');
+  const configPath = path.join(projRoot, amplifyPathFor('.config', 'project-config.json'));
   expect(fs.existsSync(configPath)).toBeTruthy();
   const configFile = fs.readFileSync(configPath);
   const config = JSON.parse(configFile.toString());
@@ -53,7 +53,7 @@ function validateProjectConfig(projRoot: string, platform: string, framework?: s
 }
 
 function validateApi(projRoot: string) {
-  const apiPath = path.join(projRoot, 'amplify', 'backend', 'api', 'amplifyDatasource');
+  const apiPath = path.join(projRoot, backendPathFor('api', 'amplifyDatasource'));
   expect(fs.existsSync(path.join(apiPath, 'schema.graphql'))).toBeTruthy();
   expect(fs.existsSync(path.join(apiPath, 'transform.conf.json'))).toBeTruthy();
   const transformConfFile = fs.readFileSync(path.join(apiPath, 'transform.conf.json'));
@@ -63,7 +63,7 @@ function validateApi(projRoot: string) {
 }
 
 function validateBackendConfig(projRoot: string) {
-  const backendConfigPath = path.join(projRoot, 'amplify', 'backend', 'backend-config.json');
+  const backendConfigPath = path.join(projRoot, backendPathFor('backend-config.json'));
   expect(fs.existsSync(backendConfigPath)).toBeTruthy();
   const backendConfigFile = fs.readFileSync(backendConfigPath);
   const backendConfig = JSON.parse(backendConfigFile.toString());
@@ -80,8 +80,8 @@ function validateModelgen(projRoot: string) {
 
 function validateAmplifyPush(projRoot: string) {
   expect(fs.existsSync(path.join(projRoot, 'src', 'aws-exports.js'))).toBeTruthy();
-  expect(fs.existsSync(path.join(projRoot, 'amplify', 'team-provider-info.json'))).toBeTruthy();
-  expect(fs.existsSync(path.join(projRoot, 'amplify', 'backend', 'amplify-meta.json'))).toBeTruthy();
+  expect(fs.existsSync(path.join(projRoot, amplifyPathFor('team-provider-info.json')))).toBeTruthy();
+  expect(fs.existsSync(path.join(projRoot, backendPathFor('amplify-meta.json')))).toBeTruthy();
 }
 
 function validateFeatureFlags(projRoot: string) {

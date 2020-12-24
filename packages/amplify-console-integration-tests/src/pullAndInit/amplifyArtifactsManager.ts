@@ -1,9 +1,10 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as util from '../util';
+import { backendRootPathFor, amplifyRootPathFor } from '../consoleHosting/path-utils';
 
 export function removeFilesForTeam(projectRootDirPath: string) {
-  const amplifyDirPath = path.join(projectRootDirPath, 'amplify');
+  const amplifyDirPath = amplifyRootPathFor(projectRootDirPath);
 
   const dotConfigDirPath = path.join(amplifyDirPath, '.config');
   const files = fs.readdirSync(dotConfigDirPath);
@@ -32,12 +33,12 @@ export function removeFilesForThirdParty(projectRootDirPath: string) {
 }
 
 function removeTeamProviderInfo(projectRootDirPath: string) {
-  const teamProviderInfoFilePath = path.join(projectRootDirPath, 'amplify', 'team-provider-info.json');
+  const teamProviderInfoFilePath = amplifyRootPathFor(projectRootDirPath, 'team-provider-info.json');
   fs.removeSync(teamProviderInfoFilePath);
 }
 
 export function checkAmplifyFolderStructure(projectRootDirPath: string): boolean {
-  const amplifyDirPath = path.join(projectRootDirPath, 'amplify');
+  const amplifyDirPath = amplifyRootPathFor(projectRootDirPath);
   const teamProviderInfoFilePath = path.join(amplifyDirPath, 'team-provider-info.json');
 
   const dotConfigDirPath = path.join(amplifyDirPath, '.config');
@@ -48,7 +49,7 @@ export function checkAmplifyFolderStructure(projectRootDirPath: string): boolean
   const currentCloudBackendDirPath = path.join(amplifyDirPath, '#current-cloud-backend');
   const currentAmplifyMetaFilePath = path.join(currentCloudBackendDirPath, 'amplify-meta.json');
 
-  const backendDirPath = path.join(amplifyDirPath, 'backend');
+  const backendDirPath = backendRootPathFor(amplifyDirPath);
   const amplifyMetaFilePath = path.join(backendDirPath, 'amplify-meta.json');
 
   return (
@@ -67,7 +68,7 @@ export function checkAmplifyFolderStructure(projectRootDirPath: string): boolean
 
 export function getTeamProviderInfo(projectRootDirPath: string) {
   let teamProviderInfo;
-  const teamProviderInfoFilePath = path.join(projectRootDirPath, 'amplify', 'team-provider-info.json');
+  const teamProviderInfoFilePath = amplifyRootPathFor(projectRootDirPath, 'team-provider-info.json');
   if (fs.existsSync(teamProviderInfoFilePath)) {
     teamProviderInfo = util.readJsonFileSync(teamProviderInfoFilePath);
   }
@@ -76,7 +77,7 @@ export function getTeamProviderInfo(projectRootDirPath: string) {
 
 export function getProjectConfig(projectRootDirPath: string) {
   let projectConfig;
-  const projectConfigPath = path.join(projectRootDirPath, 'amplify', '.config', 'project-config.json');
+  const projectConfigPath = amplifyRootPathFor(projectRootDirPath, '.config', 'project-config.json');
   if (fs.existsSync(projectConfigPath)) {
     projectConfig = util.readJsonFileSync(projectConfigPath);
   }

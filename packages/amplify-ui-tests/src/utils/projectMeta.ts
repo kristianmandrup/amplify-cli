@@ -8,7 +8,7 @@ const metaFilePathDic = {
 };
 
 export function getProjectMeta(projectRoot: string) {
-  const metaFilePath = join(projectRoot, 'amplify', '#current-cloud-backend', 'amplify-meta.json');
+  const metaFilePath = join(projectRoot, amplifyPathFor('#current-cloud-backend', 'amplify-meta.json'));
   return JSON.parse(readFileSync(metaFilePath, 'utf8'));
 }
 export function existsAWSExportsPath(projectRoot: string, platform: string): boolean {

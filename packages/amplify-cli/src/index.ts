@@ -1,4 +1,5 @@
 import * as fs from 'fs-extra';
+import * as yargs from 'yargs';
 import * as path from 'path';
 import { isCI } from 'ci-info';
 import {
@@ -38,8 +39,9 @@ export async function run() {
   let errorHandler = (e: Error) => {};
   try {
     deleteOldVersion();
+
     let pluginPlatform = await getPluginPlatform();
-    let input = getCommandLineInput(pluginPlatform);
+    let input: any = getCommandLineInput(pluginPlatform);
     // with non-help command supplied, give notification before execution
     if (input.command !== 'help') {
       // Checks for available update, defaults to a 1 day interval for notification
@@ -78,7 +80,10 @@ export async function run() {
       getEnvInfo: context.amplify.getEnvInfo,
     });
 
-    const projectPath = pathManager.findProjectRoot() ?? process.cwd();
+    const prjPath = input.options.projectPath;
+    const projectPath = prjPath || (pathManager.findProjectRoot() ?? process.cwd());
+    // process.chdir(projectPath);
+
     const useNewDefaults = !stateManager.projectConfigExists(projectPath);
 
     await FeatureFlags.initialize(contextEnvironmentProvider, useNewDefaults);

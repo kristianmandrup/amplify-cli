@@ -11,6 +11,7 @@ const semver = require('semver');
 const { engines } = require('../package.json');
 const { initializeAwsExports } = require('amplify-frontend-javascript');
 const { callAmplify } = require('./call-amplify');
+const extend = require('extend');
 
 const isWin = process.platform.startsWith('win');
 const npm = isWin ? 'npm.cmd' : 'npm';
@@ -49,7 +50,7 @@ const run = async opts => {
   try {
     const platform = await guessPlatform(opts.platform, opts.framework);
     if (!opts.skipInit) {
-      await createAmplifySkeletonProject(platform.frontend);
+      await createAmplifySkeletonProject(platform.frontend, opts);
     }
     if (platform.frontend === 'ios' && !opts.internalOnlyIosCallback) {
       // the ios frontend plugin handles the post init event to call back to ampfliy-app
@@ -58,7 +59,7 @@ const run = async opts => {
       return;
     }
     updateFrameworkInProjectConfig(platform.framework);
-    await createAmplifyHelperFiles(platform.frontend);
+    await createAmplifyHelperFiles(platform.frontend, opts);
     console.log(`${emoji.get('white_check_mark')} Amplify setup completed successfully.`);
     showHelpText(platform.frontend);
   } catch (err) {
@@ -137,6 +138,37 @@ async function amplifyCLIVersionCheck() {
   }
 }
 
+const defaults = {
+  amplifyPath: 'amplify',
+  backendPath: 'backend',
+};
+
+let $paths = {
+  ...defaults,
+};
+
+let amplifyPathFor = (...paths) => {
+  return path.join('.', $paths.amplifyPath, ...paths);
+};
+
+let backendPathFor = (...paths) => {
+  return amplifyPathFor($paths.backendPath, ...paths);
+};
+
+const getAmplifyRc = (opts = {}) => {
+  const localAmplifyRcPath = path.join('.amplifyrc');
+  const existingApp = fs.existsSync(localAmplifyRcPath);
+  const amplifyRcFilePath = opts.amplifyrcPath || localAmplifyRcPath;
+  if (existingApp === true) {
+    const amplifyRc = JSON.parse(fs.readFileSync(amplifyRcFilePath));
+    return amplifyRc;
+  }
+  if (!fs.existsSync(amplifyRcFilePath)) {
+    fs.writeFileSync(amplifyRcFilePath, JSON.stringify(opts, null, 4));
+  }
+  return opts;
+};
+
 /**
  * Checks if amplify directory is present.
  * If not - then generate a skeleton with a base project
@@ -145,8 +177,13 @@ async function amplifyCLIVersionCheck() {
  * @param {string} jsFramework
  * @returns {Promise<void>}
  */
-const createAmplifySkeletonProject = async frontend => {
-  if (fs.existsSync(path.join('.', 'amplify', 'backend')) && frontend !== 'ios') {
+const createAmplifySkeletonProject = async (frontend, opts) => {
+  $paths = {
+    ...$paths,
+    ...getAmplifyRc(opts),
+  };
+  const backendPath = backendPathFor();
+  if (fs.existsSync(backendPath) && frontend !== 'ios') {
     console.log(
       `An Amplify project is already initialized in your current working directory ${emoji.get('smiley')}. Not generating base project.\n`,
     );
@@ -163,7 +200,7 @@ const createAmplifySkeletonProject = async frontend => {
 };
 
 const updateFrameworkInProjectConfig = framework => {
-  const projectConfigFilePath = path.join('amplify', '.config', 'project-config.json');
+  const projectConfigFilePath = amplifyPathFor('.config', 'project-config.json');
   const projectConfig = JSON.parse(fs.readFileSync(projectConfigFilePath, 'utf8'));
 
   if (framework && projectConfig.javascript) {
@@ -294,7 +331,7 @@ function guessFramework(projectPath) {
   return framework;
 }
 
-async function createJSHelperFiles() {
+async function createJSHelperFiles(opts = {}) {
   /* Check for build configs  */
   const buildConfig = {
     profile: 'default',
@@ -308,7 +345,7 @@ async function createJSHelperFiles() {
   /* Add run scripts to package.json */
 
   const sourceScriptDir = path.join(__dirname, 'scripts');
-  const targetScriptDir = path.join('.', 'amplify', 'scripts');
+  const targetScriptDir = amplifyPathFor('scripts');
 
   fs.ensureDirSync(targetScriptDir);
   fs.copySync(sourceScriptDir, targetScriptDir);
@@ -318,14 +355,17 @@ async function createJSHelperFiles() {
   if (fs.existsSync(packageJSONFilepath)) {
     packageJSON = JSON.parse(fs.readFileSync(packageJSONFilepath));
   } else {
-    packageJSON = {
-      name: 'amplify-app',
-      version: '1.0.0',
-      description: 'amplify app skeleton',
-      main: 'index.js',
-      dependencies: {},
-      devDependencies: {},
-    };
+    packageJSON = extend(
+      {
+        name: 'amplify-app',
+        version: '1.0.0',
+        description: 'amplify app skeleton',
+        main: 'index.js',
+        dependencies: {},
+        devDependencies: {},
+      },
+      opts,
+    );
   }
 
   if (!packageJSON.scripts) {
@@ -335,8 +375,8 @@ async function createJSHelperFiles() {
     packageJSON.devDependencies = {};
   }
 
-  const modelGenScriptPath = path.join('amplify', 'scripts', 'amplify-modelgen.js');
-  const pushScript = path.join('amplify', 'scripts', 'amplify-push.js');
+  const modelGenScriptPath = amplifyPathFor('scripts', 'amplify-modelgen.js');
+  const pushScript = amplifyPathFor('scripts', 'amplify-push.js');
 
   const runScripts = {
     'amplify-modelgen': `node ${modelGenScriptPath}`,
@@ -426,10 +466,10 @@ async function createIosHelperFiles() {
   }
 }
 
-async function createAmplifyHelperFiles(frontend) {
+async function createAmplifyHelperFiles(frontend, opts) {
   if (frontend === 'javascript') {
     initializeAwsExports(path.resolve('src'));
-    await createJSHelperFiles();
+    await createJSHelperFiles(opts);
   }
 
   if (frontend === 'android') {

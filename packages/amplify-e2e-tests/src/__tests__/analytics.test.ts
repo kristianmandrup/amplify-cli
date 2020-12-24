@@ -71,7 +71,7 @@ describe('amplify add analytics', () => {
     await addPinpoint(projRoot, { rightName, wrongName: '$' });
     await amplifyPushUpdate(projRoot);
     expect(fs.existsSync(path.join(projRoot, 'lib', 'amplifyconfiguration.dart'))).toBe(true);
-    expect(fs.existsSync(path.join(projRoot, 'amplify', 'backend', 'analytics', rightName))).toBe(true);
+    expect(fs.existsSync(path.join(projRoot, backendPathFor('analytics', rightName)))).toBe(true);
   });
 
   it('add kinesis', async () => {
@@ -80,6 +80,6 @@ describe('amplify add analytics', () => {
     const rightName = `myapp${random}`;
     await addKinesis(projRoot, { rightName, wrongName: '$' });
     await amplifyPushUpdate(projRoot);
-    expect(fs.existsSync(path.join(projRoot, 'amplify', 'backend', 'analytics', rightName))).toBe(true);
+    expect(fs.existsSync(path.join(projRoot, backendPathFor('analytics', rightName)))).toBe(true);
   });
 });

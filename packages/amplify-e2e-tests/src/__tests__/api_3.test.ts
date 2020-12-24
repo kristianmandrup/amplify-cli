@@ -29,7 +29,7 @@ describe('amplify add api (GraphQL)', () => {
   });
 
   afterEach(async () => {
-    const metaFilePath = path.join(projRoot, 'amplify', '#current-cloud-backend', 'amplify-meta.json');
+    const metaFilePath = path.join(projRoot, amplifyPathFor('#current-cloud-backend', 'amplify-meta.json'));
     if (existsSync(metaFilePath)) {
       await deleteProject(projRoot);
     }
@@ -47,7 +47,7 @@ describe('amplify add api (GraphQL)', () => {
     expect(transformConfig.Version).toEqual(TRANSFORM_CURRENT_VERSION);
 
     transformConfig.Version = TRANSFORM_BASE_VERSION;
-    const apiRoot = path.join(projRoot, 'amplify', 'backend', 'api', name);
+    const apiRoot = path.join(projRoot, backendPathFor('api', name));
     writeTransformerConfiguration(apiRoot, transformConfig);
 
     await amplifyPush(projRoot);

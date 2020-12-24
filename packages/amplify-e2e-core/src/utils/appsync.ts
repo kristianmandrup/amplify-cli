@@ -19,6 +19,6 @@ export async function appsyncGraphQLRequest(resource: { [id: string]: any }, op:
 }
 
 export const getProjectSchema = (projRoot: string, apiName: string) => {
-  const schemaFilePath = path.join(projRoot, 'amplify', 'backend', 'api', apiName, 'schema.graphql');
+  const schemaFilePath = path.join(projRoot, backendPathFor('api', apiName, 'schema.graphql'));
   return fs.readFileSync(schemaFilePath, 'utf8');
 };

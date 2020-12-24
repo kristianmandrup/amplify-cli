@@ -117,7 +117,8 @@ function groupHasFile(group, name) {
  * @returns {string?}
  */
 function getSchemaFile(rootDir) {
-  const schemaFilePattern = path.join(rootDir, 'amplify', 'backend', 'api', '*', GRAPHQL_SCHEMA);
+  const apiPatternPath = backendPathFor('api', '*', GRAPHQL_SCHEMA);
+  const schemaFilePattern = path.join(rootDir, apiPatternPath);
   const [schemaFile] = glob.sync(schemaFilePattern);
   return schemaFile;
 }
@@ -136,7 +137,8 @@ function addAmplifyModels(rootDir, schemaFile, xcodeProject) {
   }
 
   // add generated model
-  const modelsFilePattern = path.join(rootDir, 'amplify', 'generated', 'models', '*.swift');
+  const modelsPatternPath = amplifyPathFor('generated', 'models', '*.swift');
+  const modelsFilePattern = path.join(rootDir, modelsPatternPath);
   const modelFiles = glob.sync(modelsFilePattern).map(file => {
     return path.relative(rootDir, file);
   });

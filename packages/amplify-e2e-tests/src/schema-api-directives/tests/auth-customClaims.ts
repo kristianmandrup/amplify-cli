@@ -34,7 +34,7 @@ export async function runTest(projectDir: string, testModule: any) {
 }
 
 export function updateTriggerHandler(projectDir: string) {
-  const backendFunctionDirPath = path.join(projectDir, 'amplify', 'backend', 'function');
+  const backendFunctionDirPath = path.join(projectDir, backendPathFor('function'));
   const functionName = fs.readdirSync(backendFunctionDirPath)[0];
   const triggerHandlerFilePath = path.join(backendFunctionDirPath, functionName, 'src', 'alter-claims.js');
   fs.writeFileSync(triggerHandlerFilePath, func);

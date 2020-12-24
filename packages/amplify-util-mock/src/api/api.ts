@@ -100,7 +100,7 @@ export class APITest {
     try {
       context.print.info('Running GraphQL codegen');
       const { projectPath } = context.amplify.getEnvInfo();
-      const schemaPath = path.join(projectPath, 'amplify', 'backend', 'api', this.apiName, 'build', 'schema.graphql');
+      const schemaPath = path.join(projectPath, backendPathFor('api', this.apiName, 'build', 'schema.graphql'));
       if (config && config.schema) {
         fs.writeFileSync(schemaPath, config.schema.content);
       }
@@ -188,7 +188,7 @@ export class APITest {
     if (lambdaDataSources.length === 0) {
       return config;
     }
-    const provisionedLambdas = getAllLambdaFunctions(context, path.join(this.projectRoot, 'amplify', 'backend'));
+    const provisionedLambdas = getAllLambdaFunctions(context, path.join(this.projectRoot, backendPathFor()));
 
     return {
       ...config,
@@ -271,7 +271,7 @@ export class APITest {
 
   private async getAPIBackendDirectory(context) {
     const { projectPath } = context.amplify.getEnvInfo();
-    return path.join(projectPath, 'amplify', 'backend', 'api', this.apiName);
+    return path.join(projectPath, backendPathFor('api', this.apiName));
   }
 
   private async getAPIParameterFilePath(context): Promise<string> {

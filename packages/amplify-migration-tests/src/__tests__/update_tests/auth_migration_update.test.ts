@@ -18,7 +18,7 @@ describe('amplify auth migration', () => {
   });
 
   afterEach(async () => {
-    const metaFilePath = join(projRoot, 'amplify', '#current-cloud-backend', 'amplify-meta.json');
+    const metaFilePath = join(projRoot, amplifyPathFor('#current-cloud-backend', 'amplify-meta.json'));
     if (fs.existsSync(metaFilePath)) {
       await deleteProject(projRoot);
     }

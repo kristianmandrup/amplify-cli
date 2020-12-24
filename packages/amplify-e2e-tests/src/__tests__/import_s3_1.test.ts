@@ -175,7 +175,7 @@ describe('s3 import', () => {
     const projectDetails = getStorageProjectDetails(projectRoot);
 
     // Verify that index.js gets the userpool env var name injected
-    const amplifyBackendDirPath = path.join(projectRoot, 'amplify', 'backend');
+    const amplifyBackendDirPath = path.join(projectRoot, backendPathFor());
     const functionFilePath = path.join(amplifyBackendDirPath, 'function', functionName);
     const amplifyFunctionIndexFilePath = path.join(functionFilePath, 'src', 'index.js');
     const s3ResourceNameUpperCase = projectDetails.storageResourceName.toUpperCase();

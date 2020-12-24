@@ -22,7 +22,7 @@ export const invoke = async (request: InvocationRequest): Promise<string> => {
   let tempDir: string = '';
   let eventFile: string = '';
   try {
-    tempDir = fs.mkdtempSync(path.join(request.srcRoot, 'amplify'));
+    tempDir = fs.mkdtempSync(path.join(request.srcRoot, amplifyPathFor()));
     eventFile = path.join(tempDir, 'event.json');
     fs.writeFileSync(eventFile, request.event);
     result = execa.sync(

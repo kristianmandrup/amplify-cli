@@ -34,7 +34,7 @@ describe('amplify add api (GraphQL)', () => {
   });
 
   afterEach(async () => {
-    const metaFilePath = path.join(projRoot, 'amplify', '#current-cloud-backend', 'amplify-meta.json');
+    const metaFilePath = path.join(projRoot, amplifyPathFor('#current-cloud-backend', 'amplify-meta.json'));
     if (existsSync(metaFilePath)) {
       await deleteProject(projRoot);
     }

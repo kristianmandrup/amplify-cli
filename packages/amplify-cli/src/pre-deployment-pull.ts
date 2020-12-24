@@ -3,6 +3,7 @@ import fetch from 'node-fetch';
 import path from 'path';
 import fs from 'fs-extra';
 import { AppAlreadyDeployedError, AppNotFoundError, SchemaDoesNotExistError, $TSContext, pathManager } from 'amplify-cli-core';
+import { backendPathFor } from './path-utils';
 
 export async function preDeployPullBackend(context: $TSContext, sandboxId: string) {
   const providerPlugin = await import(context.amplify.getProviderPlugins(context).awscloudformation);
@@ -53,6 +54,6 @@ export async function preDeployPullBackend(context: $TSContext, sandboxId: strin
 }
 
 function replaceSchema(schema: string) {
-  const schemaFilePath = path.join(process.cwd(), 'amplify', 'backend', 'api', 'amplifyDatasource', 'schema.graphql');
+  const schemaFilePath = path.join(process.cwd(), backendPathFor('api', 'amplifyDatasource', 'schema.graphql'));
   fs.writeFileSync(schemaFilePath, schema);
 }
