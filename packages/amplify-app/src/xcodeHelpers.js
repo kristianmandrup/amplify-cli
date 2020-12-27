@@ -123,6 +123,9 @@ function getSchemaFile(rootDir) {
   return schemaFile;
 }
 
+// TODO: add context param
+// contect.amplify.pathManager.getAmplifyDirPathForProject(projectPath, ...)
+
 /**
  * Adds amplify generated models files to the "AmplifyModels" group in given Xcode project
  * @param {string} rootDir
@@ -130,14 +133,15 @@ function getSchemaFile(rootDir) {
  * @param {XcodeProj} xcodeProject
  * @returns {boolean} returns true if models have been successufully added to the `xcodeProject`
  */
-function addAmplifyModels(rootDir, schemaFile, xcodeProject) {
+function addAmplifyModels(context, rootDir, schemaFile, xcodeProject) {
   let hasGeneratedFiles = false;
   if (!schemaFile) {
     return hasGeneratedFiles;
   }
 
+  const { amplifyDirPathFor } = context.pathManager
   // add generated model
-  const modelsPatternPath = amplifyPathFor('generated', 'models', '*.swift');
+  const modelsPatternPath = amplifyDirPathFor('generated', 'models', '*.swift');
   const modelsFilePattern = path.join(rootDir, modelsPatternPath);
   const modelFiles = glob.sync(modelsFilePattern).map(file => {
     return path.relative(rootDir, file);
@@ -169,7 +173,7 @@ function addAmplifyModels(rootDir, schemaFile, xcodeProject) {
  * @public
  * @return {Promise<void>}
  */
-async function addAmplifyFiles() {
+async function addAmplifyFiles(context) {
   const projectDir = getXcodeProjectDir();
   if (!projectDir) {
     // if not in a xcode project do not move forward with xcode logic
@@ -198,7 +202,7 @@ async function addAmplifyFiles() {
         const schemaFile = getSchemaFile(rootDir);
 
         // step 1: add generated models
-        hasGeneratedFiles = addAmplifyModels(rootDir, schemaFile, project);
+        hasGeneratedFiles = addAmplifyModels(context, rootDir, schemaFile, project);
 
         // step 2: add configuration, schema and other amplify resources
         const amplifyConfigGroup = getOrCreateGroup(project, 'AmplifyConfig');

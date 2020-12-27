@@ -1,24 +1,4 @@
-const path = require('path');
-const fs = require('fs-extra');
-
-const defaults = {
-  amplifyPath: 'amplify',
-  backendPath: 'backend',
-};
-
-const $paths = {
-  ...defaults,
-};
-
-export const amplifyPathFor = (...paths) => {
-  return path.join('.', $paths.amplifyPath, ...paths);
-};
-
-export const backendPathFor = (...paths) => {
-  return amplifyPathFor($paths.backendPath, ...paths);
-};
-
-export const getAmplifyRc = (opts: any = {}) => {
+export const getAmplifyRc = (opts = {}) => {
   const localAmplifyRcPath = path.join('.amplifyrc');
   const existingApp = fs.existsSync(localAmplifyRcPath);
   const amplifyRcFilePath = opts.amplifyrcPath || localAmplifyRcPath;

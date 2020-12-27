@@ -5,15 +5,15 @@ import { JSONUtilities } from 'amplify-cli-core';
 import { nspawn as spawn, ExecutionContext, getCLIPath, KEY_DOWN_ARROW } from '..';
 import { getLayerVersion, listVersions } from '../utils/sdk-calls';
 import { multiSelect } from '../utils/selectors';
-import { backendPathFor, amplifyPathFor } from './path-utils';
 
 export type LayerRuntimes = 'nodejs' | 'python';
 
 const layerRuntimeChoices = ['NodeJS', 'Python'];
 const permissionChoices = ['Specific AWS accounts', 'Specific AWS organization', 'Public (Anyone on AWS can use this layer)'];
 
-export function validateLayerDir(projRoot: string, layerName: string, runtimes: LayerRuntimes[]): boolean {
-  let layerDir = path.join(projRoot, backendPathFor('function', layerName));
+export function validateLayerDir(context, projRoot: string, layerName: string, runtimes: LayerRuntimes[]): boolean {
+  const { getBackendDirPathFor } = context.pathManager
+  let layerDir = path.join(projRoot, getBackendDirPathFor('function', layerName));
   let validDir = fs.pathExistsSync(path.join(layerDir, 'opt'));
   if (runtimes && runtimes.length) {
     for (let runtime of runtimes) {
@@ -161,14 +161,15 @@ export interface LayerPermission {
   orgs?: string[];
 }
 
-function getLayerDataFromTeamProviderInfo(projRoot: string, layerName: string, envName: string) {
-  const teamProviderInfoPath = path.join(projRoot, amplifyPathFor('team-provider-info.json'));
+function getLayerDataFromTeamProviderInfo(context, projRoot: string, layerName: string, envName: string) {
+  const { getBackendDirPathFor, getAmplifyDirPathFor } = context.pathManager
+  const teamProviderInfoPath = path.join(projRoot, getAmplifyDirPathFor('team-provider-info.json'));
   const teamProviderInfo = JSONUtilities.readJson(teamProviderInfoPath);
   return _.get(teamProviderInfo, [envName, 'nonCFNdata', 'function', layerName]);
 }
 
 function getLayerRuntimes(projRoot: string, layerName: string) {
-  const runtimesFilePath = path.join(projRoot, backendPathFor('function', layerName, 'layer-runtimes.json'));
+  const runtimesFilePath = path.join(projRoot, getBackendDirPathFor('function', layerName, 'layer-runtimes.json'));
   return JSONUtilities.readJson(runtimesFilePath);
 }
 
@@ -187,16 +188,17 @@ function getLayerRuntimeInfo(runtime: LayerRuntimes) {
   }
 }
 
-function waitForLayerSuccessPrintout(chain: ExecutionContext, settings: any, action: string) {
+function waitForLayerSuccessPrintout(context, chain: ExecutionContext, settings: any, action: string) {
+  const { getBackendDirPathFor } = context.pathManager
   chain
     .wait(`✅ Lambda layer folders & files ${action}:`)
-    .wait(path.join(backendPathFor('function', settings.layerName)))
+    .wait(path.join(getBackendDirPathFor('function', settings.layerName)))
     .wait('Next steps:')
     .wait('Move your libraries to the following folder:');
 
   for (let runtime of settings.runtimes) {
     const { displayName, path } = getLayerRuntimeInfo(runtime);
-    const backPath = backendPathFor(`/function/${settings.layerName}/${path}`);
+    const backPath = getBackendDirPathFor(`/function/${settings.layerName}/${path}`);
     const layerRuntimeDir = `[${displayName}]: ${backPath}`;
     chain.wait(layerRuntimeDir);
   }

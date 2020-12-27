@@ -27,8 +27,9 @@ export function deleteProjectDir(root: string) {
   rimraf.sync(root);
 }
 
-export function deleteAmplifyDir(root: string) {
-  rimraf.sync(path.join(root, amplifyPathFor());
+export function deleteAmplifyDir(context, root: string) {
+  const { getAmplifyDirPath } = context.pathManager
+  rimraf.sync(path.join(root, getAmplifyDirPath());
 }
 
 export function overrideFunctionSrc(root: string, name: string, code: string) {

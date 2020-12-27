@@ -12,13 +12,13 @@ import {
   deleteProject,
   addEnvironment,
 } from '../src/consoleHosting/consoleHosting';
+import { constructContext } from '@amplify/cli'
 import { loadTypeFromTeamProviderInfo, createTestProject, cleanHostingLocally } from '../src/consoleHosting/utils';
 import { deleteProjectDir, getProfileName, npmInstall } from '../src/util';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { TYPE_MANUAL } from '../src/consoleHosting/constants';
 import { ORIGINAL_ENV, NEW_ENV } from '../src/consoleHosting/constants';
-import { backendPathFor } from '../src/consoleHosting/path-utils';
 
 describe('amplify console add hosting', () => {
   let projRoot: string;
@@ -85,10 +85,11 @@ describe('amplify console add hosting', () => {
   });
 
   it('amplify remove hosting should print out correct error message when there is no local hosting', async () => {
+    const context = constructContext()
     await removeNonExistingHosting(projRoot);
     await addManualHosting(projRoot);
     await amplifyPush(projRoot);
-    cleanHostingLocally(projRoot, ORIGINAL_ENV);
+    cleanHostingLocally(context, projRoot, ORIGINAL_ENV);
     await removeHostingEnabledInConsole(projRoot);
   });
 

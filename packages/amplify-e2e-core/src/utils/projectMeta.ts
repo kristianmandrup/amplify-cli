@@ -16,41 +16,48 @@ function getAmplifyConfigIOSPath(projRoot: string): string {
   return path.join(projRoot, 'amplifyconfiguration.json');
 }
 
-function getAmplifyDirPath(projRoot: string): string {
-  return path.join(projRoot, amplifyPathFor());
+function getAmplifyDirPath(context, projRoot: string): string {
+  const { getAmplifyDirPath } = context.pathManager
+  return path.join(projRoot, getAmplifyDirPath());
 }
 
 function getAWSConfigIOSPath(projRoot: string): string {
   return path.join(projRoot, 'awsconfiguration.json');
 }
 
-function getProjectMeta(projectRoot: string) {
-  const metaFilePath: string = path.join(projectRoot, amplifyPathFor('#current-cloud-backend', 'amplify-meta.json'));
+function getProjectMeta(context, projectRoot: string) {
+  const { getAmplifyDirPath } = context.pathManager
+  const metaFilePath: string = path.join(projectRoot, getAmplifyDirPath('#current-cloud-backend', 'amplify-meta.json'));
   return JSON.parse(fs.readFileSync(metaFilePath, 'utf8'));
 }
 
-function getProjectTags(projectRoot: string) {
-  const projectTagsFilePath: string = path.join(projectRoot, amplifyPathFor('#current-cloud-backend', 'tags.json'));
+function getProjectTags(context, projectRoot: string) {
+  const { getAmplifyDirPath } = context.pathManager
+  const projectTagsFilePath: string = path.join(projectRoot, getAmplifyDirPath('#current-cloud-backend', 'tags.json'));
   return JSON.parse(fs.readFileSync(projectTagsFilePath, 'utf8'));
 }
 
-function getBackendAmplifyMeta(projectRoot: string) {
-  const metaFilePath: string = path.join(projectRoot, backendPathFor('amplify-meta.json'));
+function getBackendAmplifyMeta(context, projectRoot: string) {
+  const { getBackendDirPath } = context.pathManager
+  const metaFilePath: string = path.join(projectRoot, getBackendDirPath('amplify-meta.json'));
   return JSON.parse(fs.readFileSync(metaFilePath, 'utf8'));
 }
 
-function getBackendConfig(projectRoot: string) {
-  const backendFConfigFilePath: string = path.join(projectRoot, backendPathFor('backend-config.json'));
+function getBackendConfig(context, projectRoot: string) {
+  const { getBackendDirPath } = context.pathManager
+  const backendFConfigFilePath: string = path.join(projectRoot, getBackendDirPath('backend-config.json'));
   return JSON.parse(fs.readFileSync(backendFConfigFilePath, 'utf8'));
 }
 
-function getCloudBackendConfig(projectRoot: string) {
-  const currentCloudPath: string = path.join(projectRoot, amplifyPathFor('#current-cloud-backend', 'backend-config.json'));
+function getCloudBackendConfig(context, projectRoot: string) {
+  const { getAmplifyDirPath } = context.pathManager
+  const currentCloudPath: string = path.join(projectRoot, getAmplifyDirPath('#current-cloud-backend', 'backend-config.json'));
   return JSON.parse(fs.readFileSync(currentCloudPath, 'utf8'));
 }
 
-function getTeamProviderInfo(projectRoot: string) {
-  const teamProviderFilePath: string = path.join(projectRoot, amplifyPathFor('team-provider-info.json'));
+function getTeamProviderInfo(context, projectRoot: string) {
+  const { getAmplifyDirPath } = context.pathManager
+  const teamProviderFilePath: string = path.join(projectRoot, getAmplifyDirPath('team-provider-info.json'));
   return JSON.parse(fs.readFileSync(teamProviderFilePath, 'utf8'));
 }
 

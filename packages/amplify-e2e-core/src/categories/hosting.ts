@@ -104,8 +104,9 @@ export async function createReactTestProject(): Promise<string> {
   return projRoot;
 }
 
-export function resetBuildCommand(projectDir: string, newBuildCommand: string): string {
-  const projectConfigFilePath = path.join(projectDir, amplifyPathFor('.config', 'project-config.json'));
+export function resetBuildCommand(context, projectDir: string, newBuildCommand: string): string {
+  const { getAmplifyDirPathFor } = context.pathManager 
+  const projectConfigFilePath = path.join(projectDir, getAmplifyDirPathFor('.config', 'project-config.json'));
   const projectConfig = readJsonFile(projectConfigFilePath);
   const currentBuildCommand = projectConfig.javascript.config.BuildCommand;
   projectConfig.javascript.config.BuildCommand = newBuildCommand;

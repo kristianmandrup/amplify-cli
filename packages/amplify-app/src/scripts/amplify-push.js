@@ -64,7 +64,7 @@ async function configureProfile() {
   });
 }
 
-async function run() {
+async function run(options = {}) {
   /* Run amplify init + push or amplify push */
 
   let buildConfig;
@@ -118,7 +118,9 @@ async function run() {
 
   let cloudPush;
 
-  const localEnvPath = amplifyPathFor('.config', 'local-env-info.json');
+  const context = constructContext({}, options)
+  const { amplifyDirPathFor } = context.pathManager
+  const localEnvPath = amplifyDirPathFor('.config', 'local-env-info.json');
 
   if (!fs.existsSync(localEnvPath)) {
     // init and then push

@@ -1,6 +1,7 @@
 import * as path from 'path';
-import { $TSAny, $TSContext } from 'amplify-cli-core';
+import { $TSAny, $TSContext, PathManager } from 'amplify-cli-core';
 import { Context } from './context';
+import { getAmplifyRc } from './amplify-rc'
 
 export class AmplifyToolkit {
   private _buildResources: any;
@@ -31,6 +32,7 @@ export class AmplifyToolkit {
   private _makeId: any;
   private _openEditor: any;
   private _onCategoryOutputsChange: any;
+  private _paths: PathManager;
   private _pathManager: any;
   private _pressEnterToContinue: any;
   private _pushResources: any;
@@ -89,6 +91,10 @@ export class AmplifyToolkit {
   ) => Promise<T>;
 
   private _amplifyHelpersDirPath: string = path.normalize(path.join(__dirname, '../extensions/amplify-helpers'));
+
+  set amplifyHelpersDirPath(dirPath) {
+    this._amplifyHelpersDirPath = dirPath
+  }
 
   get buildResources(): any {
     this._buildResources = this._buildResources || require(path.join(this._amplifyHelpersDirPath, 'build-resources')).buildResources;
@@ -216,10 +222,20 @@ export class AmplifyToolkit {
       require(path.join(this._amplifyHelpersDirPath, 'on-category-outputs-change')).onCategoryOutputsChange;
     return this._onCategoryOutputsChange;
   }
+
+  get paths(): any {
+    this._paths = this._paths || new PathManager()
+    return this._paths;
+  }
+
   get pathManager(): any {
     this._pathManager = this._pathManager || require(path.join(this._amplifyHelpersDirPath, 'path-manager'));
     return this._pathManager;
   }
+  set pathManager(pathManager): any {
+    this._pathManager = pathManager
+  }
+
   get pressEnterToContinue(): any {
     this._pressEnterToContinue = this._pressEnterToContinue || require(path.join(this._amplifyHelpersDirPath, 'press-enter-to-continue'));
     return this._pressEnterToContinue;
@@ -465,7 +481,18 @@ export class AmplifyToolkit {
     return this._invokePluginMethod;
   }
 
-  constructor() {
+  constructor(options) {
+    const rcOptions = getAmplifyRc(options)
+    options = rcOptions
+    this._options = options
+
+    if (options.amplifyHelpersDirPath) {
+      this.amplifyHelpersDirPath = options.amplifyHelpersDirPath
+    }   
+    if (options.paths) {
+      this.paths.extendPathConstants(options.paths)
+    }   
+     
     this._cleanUpTasks = new Array();
   }
 

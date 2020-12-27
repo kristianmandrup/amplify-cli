@@ -62,6 +62,22 @@ export function getBackendDirPath(projectPath?) {
   return path.normalize(path.join(getAmplifyDirPath(projectPath), amplifyCLIConstants.BackendamplifyCLISubDirName));
 }
 
+export function getAmplifyDirPathFor(...paths) {
+  return path.join(getAmplifyDirPath(), ...paths)
+}
+
+export function getAmplifyDirPathForProject(projectPath, ...paths) {
+  return path.join(getAmplifyDirPath(projectPath), ...paths)
+}
+
+export function getBackendDirPathForProject(projectPath, ...paths) {
+  return path.join(getBackendDirPath(projectPath), ...paths)
+}
+
+export function getBackendDirPathFor(...paths) {
+  return path.join(getBackendDirPath(), ...paths)
+}
+
 export function getCurrentCloudBackendDirPath(projectPath?) {
   return path.normalize(path.join(getAmplifyDirPath(projectPath), amplifyCLIConstants.CurrentCloudBackendamplifyCLISubDirName));
 }

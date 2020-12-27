@@ -5,10 +5,10 @@ import * as util from '../util';
 import { readJsonFile } from 'amplify-e2e-core';
 
 import { HOSTING, RESOURCE, TYPE, TYPE_UNKNOWN, CATEGORIES, APPID, PROVIDER } from './constants';
-import { amplifyPathFor, backendPathFor } from './path-utils';
 
-export function loadTypeFromTeamProviderInfo(cwd: string, currEnv: string) {
-  const teamProviderPath = path.join(cwd, amplifyPathFor('team-provider-info.json'));
+export function loadTypeFromTeamProviderInfo(context, cwd: string, currEnv: string) {
+  const { amplifyDirPathFor } = context.pathManager
+  const teamProviderPath = path.join(cwd, amplifyDirPathFor('team-provider-info.json'));
   const content = readJsonFile(teamProviderPath);
   if (
     content &&
@@ -24,41 +24,42 @@ export function loadTypeFromTeamProviderInfo(cwd: string, currEnv: string) {
   }
 }
 
-export function cleanHostingLocally(cwd: string, currEnv: string) {
-  const hostingDirPath = path.join(cwd, backendPathFor('hosting'));
+export function cleanHostingLocally(context, cwd: string, currEnv: string) {
+  const { getAmplifyDirPathFor, getBackendDirPathFor } = context.pathManager  
+  const hostingDirPath = path.join(cwd, getBackendDirPathFor('hosting'));
   fs.removeSync(hostingDirPath);
-  const currentHostingDirPath = path.join(cwd, amplifyPathFor('#current-cloud-backend', 'hosting'));
+  const currentHostingDirPath = path.join(cwd, getAmplifyDirPathFor('#current-cloud-backend', 'hosting'));
   fs.removeSync(currentHostingDirPath);
 
-  const teamProviderInfoFilePath = path.join(cwd, amplifyPathFor('team-provider-info.json'));
+  const teamProviderInfoFilePath = path.join(cwd, getAmplifyDirPathFor('team-provider-info.json'));
   const teamProviderInfo = readJsonFile(teamProviderInfoFilePath);
   if (teamProviderInfo[currEnv].categories && teamProviderInfo[currEnv].categories.hosting) {
     delete teamProviderInfo[currEnv].categories.hosting;
     fs.writeFileSync(teamProviderInfoFilePath, JSON.stringify(teamProviderInfo, null, 4));
   }
 
-  const amplifyMetaFilePath = path.join(cwd, backendPathFor('amplify-meta.json'));
+  const amplifyMetaFilePath = path.join(cwd, getBackendDirPathFor('amplify-meta.json'));
   const amplifyMeta = readJsonFile(amplifyMetaFilePath);
   if (amplifyMeta.hosting) {
     delete amplifyMeta.hosting;
     fs.writeFileSync(amplifyMetaFilePath, JSON.stringify(amplifyMeta, null, 4));
   }
 
-  const currentMetaFilePath = path.join(cwd, amplifyPathFor('#current-cloud-backend', 'amplify-meta.json'));
+  const currentMetaFilePath = path.join(cwd, getAmplifyDirPathFor('#current-cloud-backend', 'amplify-meta.json'));
   const currentAmplifyMeta = readJsonFile(currentMetaFilePath);
   if (currentAmplifyMeta.hosting) {
     delete currentAmplifyMeta.hosting;
     fs.writeFileSync(currentMetaFilePath, JSON.stringify(currentAmplifyMeta, null, 4));
   }
 
-  const backendConfigFilePath = path.join(cwd, backendPathFor('backend-config.json'));
+  const backendConfigFilePath = path.join(cwd, getBackendDirPathFor('backend-config.json'));
   const backendConfig = readJsonFile(backendConfigFilePath);
   if (backendConfig.hosting) {
     delete backendConfig.hosting;
     fs.writeFileSync(backendConfigFilePath, JSON.stringify(backendConfig, null, 4));
   }
 
-  const currentBackendConfigFilePath = path.join(cwd, amplifyPathFor('#current-cloud-backend', 'backend-config.json'));
+  const currentBackendConfigFilePath = path.join(cwd, getAmplifyDirPathFor('#current-cloud-backend', 'backend-config.json'));
   const currentBackendConfig = readJsonFile(currentBackendConfigFilePath);
   if (currentBackendConfig.hosting) {
     delete currentBackendConfig.hosting;
@@ -67,7 +68,7 @@ export function cleanHostingLocally(cwd: string, currEnv: string) {
 }
 
 export function loadAppIdFromTeamProviderInfo(cwd: string, currEnv: string) {
-  const teamProviderPath = path.join(cwd, amplifyPathFor('team-provider-info.json'));
+  const teamProviderPath = path.join(cwd, getBackendDirPathFor('team-provider-info.json'));
   const content = readJsonFile(teamProviderPath);
   console.log('content:*******');
   console.log(currEnv);

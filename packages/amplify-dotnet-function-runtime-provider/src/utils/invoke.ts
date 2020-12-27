@@ -21,8 +21,10 @@ export const invoke = async (request: InvocationRequest): Promise<string> => {
   let result: execa.ExecaSyncReturnValue<string>;
   let tempDir: string = '';
   let eventFile: string = '';
+  const context = constructContext()
+  const { getAmplifyDirPath } = context.pathManager
   try {
-    tempDir = fs.mkdtempSync(path.join(request.srcRoot, amplifyPathFor()));
+    tempDir = fs.mkdtempSync(path.join(request.srcRoot, getAmplifyDirPath()));
     eventFile = path.join(tempDir, 'event.json');
     fs.writeFileSync(eventFile, request.event);
     result = execa.sync(

@@ -41,7 +41,8 @@ describe('amplify add hosting', () => {
   });
 
   it('publish throws error if build command is missing', async () => {
-    const currentBuildCommand = resetBuildCommand(projRoot, '');
+    const context = constructContext()
+    const currentBuildCommand = resetBuildCommand(context, projRoot, '');
     let error;
     try {
       await amplifyPublishWithoutUpdate(projRoot);

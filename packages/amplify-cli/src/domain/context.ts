@@ -7,7 +7,7 @@ export class Context {
   amplify: AmplifyToolkit;
   usageData!: IUsageData;
   constructor(public pluginPlatform: PluginPlatform, public input: Input) {
-    this.amplify = new AmplifyToolkit();
+    this.amplify = new AmplifyToolkit(input.options);
   }
 
   // ToDo: this is to attach gluegun extensions and other attached properties
@@ -15,4 +15,8 @@ export class Context {
   // After the new platform is stablized, we probably should disallow arbituary
   // properties to be attached to the context object.
   [key: string]: any;
+
+  get pathManager() {
+    return this.amplify.paths
+  }
 }
