@@ -8,7 +8,7 @@ import {
   updateApiSchema,
   updateApiWithMultiAuth,
   createNewProjectDir,
-  deleteProjectDir,
+  Utils,
   getAppSyncApi,
   getProjectMeta,
   getTransformConfig,
@@ -18,19 +18,24 @@ import path from 'path';
 import { existsSync } from 'fs';
 import { TRANSFORM_CURRENT_VERSION } from 'graphql-transformer-core';
 import _ from 'lodash';
+const { constructContext } = require('@aws-amplify/cli')
 
 describe('amplify add api (GraphQL)', () => {
   let projRoot: string;
+  const context = constructContext()
+  let utils
   beforeEach(async () => {
     projRoot = await createNewProjectDir('graphql-api');
+    utils = new Utils(context, projRoot)
   });
 
   afterEach(async () => {
-    const metaFilePath = path.join(projRoot, amplifyPathFor('#current-cloud-backend', 'amplify-meta.json'));
+    const { amplifyDirPathFor } = context.pathManager;
+    const metaFilePath = path.join(projRoot, amplifyDirPathFor('#current-cloud-backend', 'amplify-meta.json'));
     if (existsSync(metaFilePath)) {
       await deleteProject(projRoot);
     }
-    deleteProjectDir(projRoot);
+    utils.deleteProjectDir(projRoot);
   });
 
   it('init a project and add the simple_model api', async () => {
@@ -39,7 +44,7 @@ describe('amplify add api (GraphQL)', () => {
     await addApiWithSchema(projRoot, 'simple_model.graphql');
     await amplifyPush(projRoot);
 
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const region = meta.providers.awscloudformation.Region;
     const { output } = meta.api.simplemodel;
     const { GraphQLAPIIdOutput, GraphQLAPIEndpointOutput, GraphQLAPIKeyOutput } = output;
@@ -69,7 +74,7 @@ describe('amplify add api (GraphQL)', () => {
     await addApiWithSchema(projRoot, 'simple_model.graphql');
     await amplifyPush(projRoot);
 
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const region = meta.providers.awscloudformation.Region;
     const { output } = meta.api.simplemodel;
     const { GraphQLAPIIdOutput, GraphQLAPIEndpointOutput, GraphQLAPIKeyOutput } = output;
@@ -103,7 +108,7 @@ describe('amplify add api (GraphQL)', () => {
     await amplifyPush(projRoot);
     updateApiSchema(projRoot, projectName, nextSchema);
     await amplifyPushUpdate(projRoot);
-    const { output } = getProjectMeta(projRoot).api[projectName];
+    const { output } = getProjectMeta(context, projRoot).api[projectName];
     const { GraphQLAPIIdOutput, GraphQLAPIEndpointOutput, GraphQLAPIKeyOutput } = output;
 
     expect(GraphQLAPIIdOutput).toBeDefined();
@@ -117,7 +122,7 @@ describe('amplify add api (GraphQL)', () => {
     await updateApiWithMultiAuth(projRoot, {});
     await amplifyPush(projRoot);
 
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const { output } = meta.api.simplemodelmultiauth;
     const { GraphQLAPIIdOutput, GraphQLAPIEndpointOutput, GraphQLAPIKeyOutput } = output;
     const { graphqlApi } = await getAppSyncApi(GraphQLAPIIdOutput, meta.providers.awscloudformation.Region);
@@ -159,7 +164,7 @@ describe('amplify add api (GraphQL)', () => {
     await addApiWithSchema(projRoot, 'simple_model.graphql');
     await amplifyPush(projRoot);
 
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const { output } = meta.api[name];
     const { GraphQLAPIIdOutput, GraphQLAPIEndpointOutput, GraphQLAPIKeyOutput } = output;
     const { graphqlApi } = await getAppSyncApi(GraphQLAPIIdOutput, meta.providers.awscloudformation.Region);

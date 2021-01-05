@@ -19,7 +19,7 @@ export function addDEVHosting(cwd: string) {
       .sendCarriageReturn()
       .run((err: Error) => {
         if (!err) {
-          resolve();
+          resolve(null);
         } else {
           reject(err);
         }
@@ -41,7 +41,7 @@ export function addPRODHosting(cwd: string) {
       .sendCarriageReturn()
       .run((err: Error) => {
         if (!err) {
-          resolve();
+          resolve(null);
         } else {
           reject(err);
         }
@@ -56,7 +56,7 @@ export function amplifyPushWithUpdate(cwd: string) {
       .sendCarriageReturn()
       .run((err: Error) => {
         if (!err) {
-          resolve();
+          resolve(null);
         } else {
           reject(err);
         }
@@ -68,7 +68,7 @@ export function amplifyPublishWithoutUpdate(cwd: string) {
   return new Promise((resolve, reject) => {
     spawn(getCLIPath(), ['publish'], { cwd, stripColors: true }).run((err: Error) => {
       if (!err) {
-        resolve();
+        resolve(null);
       } else {
         reject(err);
       }
@@ -86,7 +86,7 @@ export function removeHosting(cwd: string) {
       .wait('Successfully removed resource')
       .run((err: Error) => {
         if (!err) {
-          resolve();
+          resolve(null);
         } else {
           reject(err);
         }
@@ -105,7 +105,7 @@ export async function createReactTestProject(): Promise<string> {
 }
 
 export function resetBuildCommand(context, projectDir: string, newBuildCommand: string): string {
-  const { getAmplifyDirPathFor } = context.pathManager 
+  const { getAmplifyDirPathFor } = context.pathManager
   const projectConfigFilePath = path.join(projectDir, getAmplifyDirPathFor('.config', 'project-config.json'));
   const projectConfig = readJsonFile(projectConfigFilePath);
   const currentBuildCommand = projectConfig.javascript.config.BuildCommand;

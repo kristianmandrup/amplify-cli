@@ -26,21 +26,22 @@ export function validateLayerDir(context, projRoot: string, layerName: string, r
 }
 
 export function validatePushedVersion(
+  context,
   projRoot: string,
   layerName: string,
   envName: string,
   version: number,
   permissions: LayerPermission[],
 ) {
-  const layerData = getLayerDataFromTeamProviderInfo(projRoot, layerName, envName);
+  const layerData = getLayerDataFromTeamProviderInfo(context, projRoot, layerName, envName);
   const storedPermissions: LayerPermission[] = _.get(layerData, ['layerVersionMap', `${version}`, 'permissions']);
   permissions.forEach(perm => expect(storedPermissions).toContainEqual(perm));
 }
 
-export async function validateLayerMetadata(projRoot: string, layerName: string, meta: any, envName: string) {
+export async function validateLayerMetadata(context, projRoot: string, layerName: string, meta: any, envName: string) {
   const { Arn: arn, Region: region } = meta.function[layerName].output;
-  const localLayerData = getLayerDataFromTeamProviderInfo(projRoot, layerName, envName);
-  const runtimes = getLayerRuntimes(projRoot, layerName);
+  const localLayerData = getLayerDataFromTeamProviderInfo(context, projRoot, layerName, envName);
+  const runtimes = getLayerRuntimes(context, projRoot, layerName);
   const runtimeValues = Object.keys(runtimes).map(key => runtimes[key].cloudTemplateValue);
   const localVersions = Object.keys(localLayerData.layerVersionMap);
 
@@ -54,7 +55,7 @@ export async function validateLayerMetadata(projRoot: string, layerName: string,
   expect(cloudData.CompatibleRuntimes).toEqual(runtimeValues);
 }
 
-export function addLayer(cwd: string, settings?: any, testingWithLatestCodebase: boolean = false) {
+export function addLayer(context, cwd: string, settings?: any, testingWithLatestCodebase: boolean = false) {
   const defaultSettings = {
     permissions: [],
   };
@@ -74,11 +75,11 @@ export function addLayer(cwd: string, settings?: any, testingWithLatestCodebase:
     multiSelect(chain, runtimeDisplayNames, layerRuntimeChoices);
     chain.wait('The current AWS account will always have access to this layer.');
     multiSelect(chain, settings.permissions, permissionChoices);
-    waitForLayerSuccessPrintout(chain, settings, 'created');
+    waitForLayerSuccessPrintout(context, chain, settings, 'created');
 
     chain.run((err: Error) => {
       if (!err) {
-        resolve();
+        resolve(null);
       } else {
         reject(err);
       }
@@ -99,7 +100,7 @@ export function removeLayer(cwd: string) {
       .sendEof()
       .run((err: Error) => {
         if (!err) {
-          resolve();
+          resolve(null);
         } else {
           reject(err);
         }
@@ -107,7 +108,7 @@ export function removeLayer(cwd: string) {
   });
 }
 
-export function updateLayer(cwd: string, settings?: any, testingWithLatestCodebase: boolean = false) {
+export function updateLayer(context, cwd: string, settings?: any, testingWithLatestCodebase: boolean = false) {
   return new Promise((resolve, reject) => {
     const chain: ExecutionContext = spawn(getCLIPath(testingWithLatestCodebase), ['update', 'function'], { cwd, stripColors: true })
       .wait('Select which capability you want to update:')
@@ -133,10 +134,10 @@ export function updateLayer(cwd: string, settings?: any, testingWithLatestCodeba
       .wait('The current AWS account will always have access to this layer.');
     multiSelect(chain, settings.permissions, permissionChoices);
 
-    waitForLayerSuccessPrintout(chain, settings, 'updated');
+    waitForLayerSuccessPrintout(context, chain, settings, 'updated');
     chain.run((err: Error) => {
       if (!err) {
-        resolve();
+        resolve(null);
       } else {
         reject(err);
       }
@@ -144,8 +145,9 @@ export function updateLayer(cwd: string, settings?: any, testingWithLatestCodeba
   });
 }
 
-export function addOptData(projRoot: string, layerName: string): void {
-  fs.writeFileSync(path.join(projRoot, backendPathFor('function', layerName, 'opt', 'data.txt')), 'data', 'utf8');
+export function addOptData(context, projRoot: string, layerName: string): void {
+  const { getBackendDirPathFor } = context.pathManager
+  fs.writeFileSync(path.join(projRoot, getBackendDirPathFor('function', layerName, 'opt', 'data.txt')), 'data', 'utf8');
 }
 
 export enum LayerPermissionName {
@@ -162,13 +164,14 @@ export interface LayerPermission {
 }
 
 function getLayerDataFromTeamProviderInfo(context, projRoot: string, layerName: string, envName: string) {
-  const { getBackendDirPathFor, getAmplifyDirPathFor } = context.pathManager
+  const { getAmplifyDirPathFor } = context.pathManager
   const teamProviderInfoPath = path.join(projRoot, getAmplifyDirPathFor('team-provider-info.json'));
   const teamProviderInfo = JSONUtilities.readJson(teamProviderInfoPath);
   return _.get(teamProviderInfo, [envName, 'nonCFNdata', 'function', layerName]);
 }
 
-function getLayerRuntimes(projRoot: string, layerName: string) {
+function getLayerRuntimes(context, projRoot: string, layerName: string) {
+  const { getBackendDirPathFor } = context.pathManager
   const runtimesFilePath = path.join(projRoot, getBackendDirPathFor('function', layerName, 'layer-runtimes.json'));
   return JSONUtilities.readJson(runtimesFilePath);
 }

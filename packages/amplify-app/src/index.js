@@ -60,7 +60,7 @@ const run = async opts => {
       return;
     }
 
-    const context = constructContext(platform, input);
+    const context = constructContext(platform, {});
 
     updateFrameworkInProjectConfig(platform.framework);
     await createAmplifyHelperFiles(context, platform.frontend, opts);
@@ -346,7 +346,7 @@ async function createJSHelperFiles(context, opts = {}) {
   }
   if (!packageJSON.devDependencies) {
     packageJSON.devDependencies = {};
-  }  
+  }
   const modelGenScriptPath = amplifyDirPathFor('scripts', 'amplify-modelgen.js');
   const pushScript = amplifyDirPathFor('scripts', 'amplify-push.js');
 

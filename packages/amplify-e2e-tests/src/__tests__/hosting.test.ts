@@ -2,15 +2,19 @@ import { amplifyPublishWithoutUpdate, createReactTestProject, resetBuildCommand 
 
 import { initJSProjectWithProfile, deleteProject } from 'amplify-e2e-core';
 import { addDEVHosting, removeHosting, amplifyPushWithoutCodegen } from 'amplify-e2e-core';
-import { deleteProjectDir, getProjectMeta } from 'amplify-e2e-core';
+import { Utils, getProjectMeta } from 'amplify-e2e-core';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+const { constructContext } = require('@aws-amplify/cli')
 
 describe('amplify add hosting', () => {
-  let projRoot: string;
+  let projRoot: string;  
+  const context = constructContext()
+  let utils
 
   beforeAll(async () => {
     projRoot = await createReactTestProject();
+    utils = new Utils(context, projRoot)
     await initJSProjectWithProfile(projRoot, {});
     await addDEVHosting(projRoot);
     await amplifyPushWithoutCodegen(projRoot);
@@ -20,12 +24,13 @@ describe('amplify add hosting', () => {
     await removeHosting(projRoot);
     await amplifyPushWithoutCodegen(projRoot);
     await deleteProject(projRoot);
-    deleteProjectDir(projRoot);
+    utils.deleteProjectDir(projRoot);
   });
 
   it('push creates correct amplify artifacts', async () => {
-    expect(fs.existsSync(path.join(projRoot, backendPathFor('hosting', 'S3AndCloudFront')))).toBe(true);
-    const projectMeta = getProjectMeta(projRoot);
+    const { backendDirPathFor } = context.pathManager;
+    expect(fs.existsSync(path.join(projRoot, backendDirPathFor('hosting', 'S3AndCloudFront')))).toBe(true);
+    const projectMeta = getProjectMeta(context, projRoot);
     expect(projectMeta.hosting).toBeDefined();
     expect(projectMeta.hosting.S3AndCloudFront).toBeDefined();
   });
@@ -41,7 +46,6 @@ describe('amplify add hosting', () => {
   });
 
   it('publish throws error if build command is missing', async () => {
-    const context = constructContext()
     const currentBuildCommand = resetBuildCommand(context, projRoot, '');
     let error;
     try {
@@ -51,6 +55,6 @@ describe('amplify add hosting', () => {
     }
     expect(error).toBeDefined();
     expect(error.message).toEqual('Process exited with non zero exit code 1');
-    resetBuildCommand(projRoot, currentBuildCommand);
+    resetBuildCommand(context, projRoot, currentBuildCommand);
   });
 });

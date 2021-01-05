@@ -61,8 +61,8 @@ function getTeamProviderInfo(context, projectRoot: string) {
   return JSON.parse(fs.readFileSync(teamProviderFilePath, 'utf8'));
 }
 
-function getS3StorageBucketName(projectRoot: string) {
-  const meta = getProjectMeta(projectRoot);
+function getS3StorageBucketName(context, projectRoot: string) {
+  const meta = getProjectMeta(context, projectRoot);
   const storage = meta['storage'];
   const s3 = Object.keys(storage).filter(r => storage[r].service === 'S3');
   const fStorageName = s3[0];
@@ -88,8 +88,8 @@ function getDeploymentSecrets(): any {
   );
 }
 
-function isDeploymentSecretForEnvExists(projRoot: string, envName: string): boolean {
-  const teamproviderInfo = getTeamProviderInfo(projRoot);
+function isDeploymentSecretForEnvExists(context, projRoot: string, envName: string): boolean {
+  const teamproviderInfo = getTeamProviderInfo(context, projRoot);
   const rootStackId = teamproviderInfo[envName].awscloudformation.StackId.split('/')[2];
   const resource = _.first(Object.keys(teamproviderInfo[envName].categories.auth));
   const deploymentSecrets = getDeploymentSecrets();

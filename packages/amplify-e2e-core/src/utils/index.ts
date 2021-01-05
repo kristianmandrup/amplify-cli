@@ -23,56 +23,81 @@ export * from './transformConfig';
 // run dotenv config to update env variable
 config();
 
-export function deleteProjectDir(root: string) {
-  rimraf.sync(root);
+export class Utils {
+  context: any
+  root: string
+
+  constructor(context, root: string = ".") {
+    this.context = context
+    this.root = root
+  }
+
+  deleteProjectDir(projRoot?) {
+    const { root } = this
+    rimraf.sync(projRoot || root);
+  }
+
+  deleteAmplifyDir() {
+    const { context, root } = this
+    const { getAmplifyDirPath } = context.pathManager
+    rimraf.sync(path.join(root, getAmplifyDirPath()));
+  }
+
+  overrideFunctionSrc(name: string, code: string) {
+    const { root, getPathToFunction } = this
+    let indexPath = path.join(getPathToFunction(name), 'src', 'index.js');
+    fs.writeFileSync(indexPath, code);
+  }
+
+  getFunctionSrc(name: string): Buffer {
+    const { root, getPathToFunction } = this
+    let indexPath = path.join(getPathToFunction(name), 'src', 'index.js');
+    return fs.readFileSync(indexPath);
+  }
+
+  //overriding code for node
+  overrideLayerCode(name: string, code: string, fileName: string) {
+    const { root, getPathToFunction } = this
+    const dirPath = path.join(getPathToFunction(name), 'lib', 'nodejs', 'node_modules', name);
+    fs.ensureDirSync(dirPath);
+    const filePath = path.join(dirPath, fileName);
+    fs.writeFileSync(filePath, code);
+  }
+
+  // overriding code for python
+  overrideFunctionSrcPython(name: string, source: string) {
+    const { root, getPathToFunction } = this
+    const destFilePath = path.join(getPathToFunction(name), 'src', 'index.py');
+    fs.copyFileSync(source, destFilePath);
+  }
+
+  overrideLayerCodePython(name: string, source: string) {
+    const { root, getPathToFunction } = this
+    const dirPath = path.join(getPathToFunction(name), 'lib', 'python', 'lib', 'python3.8', 'site-packages');
+    fs.ensureDirSync(dirPath);
+    const destfilePath = path.join(dirPath, 'testfunc.py');
+    fs.copyFileSync(source, destfilePath);
+  }
+
+  overridefunctionSrcJava(name: string, source: string) {
+    const { root, getPathToFunction } = this
+    const destFilePath = path.join(getPathToFunction(name), 'build.gradle');
+    fs.copyFileSync(source, destFilePath);
+  }
+
+  overrideLayerCodeJava(layerName: string) {
+    const { getPathToFunction } = this
+    const destDir = path.join(getPathToFunction(layerName), 'lib', 'java', 'lib');
+    const srcDir = path.join(getPathToFunction(layerName), 'build', 'java', 'lib');
+
+    fs.copySync(srcDir, destDir);
+  }
+
+  getPathToFunction(funcName: string) {
+    const { context, root } = this
+    const { getBackendDirPathFor } = context.pathManager
+    return path.join(root, getBackendDirPathFor('function', funcName));
+  }
 }
 
-export function deleteAmplifyDir(context, root: string) {
-  const { getAmplifyDirPath } = context.pathManager
-  rimraf.sync(path.join(root, getAmplifyDirPath());
-}
 
-export function overrideFunctionSrc(root: string, name: string, code: string) {
-  let indexPath = path.join(getPathToFunction(root, name), 'src', 'index.js');
-  fs.writeFileSync(indexPath, code);
-}
-
-export function getFunctionSrc(root: string, name: string): Buffer {
-  let indexPath = path.join(getPathToFunction(root, name), 'src', 'index.js');
-  return fs.readFileSync(indexPath);
-}
-
-//overriding code for node
-export function overrideLayerCode(root: string, name: string, code: string, fileName: string) {
-  const dirPath = path.join(getPathToFunction(root, name), 'lib', 'nodejs', 'node_modules', name);
-  fs.ensureDirSync(dirPath);
-  const filePath = path.join(dirPath, fileName);
-  fs.writeFileSync(filePath, code);
-}
-
-// overriding code for python
-export function overrideFunctionSrcPython(root: string, name: string, source: string) {
-  const destFilePath = path.join(getPathToFunction(root, name), 'src', 'index.py');
-  fs.copyFileSync(source, destFilePath);
-}
-
-export function overrideLayerCodePython(root: string, name: string, source: string) {
-  const dirPath = path.join(getPathToFunction(root, name), 'lib', 'python', 'lib', 'python3.8', 'site-packages');
-  fs.ensureDirSync(dirPath);
-  const destfilePath = path.join(dirPath, 'testfunc.py');
-  fs.copyFileSync(source, destfilePath);
-}
-
-export function overridefunctionSrcJava(root: string, name: string, source: string) {
-  const destFilePath = path.join(getPathToFunction(root, name), 'build.gradle');
-  fs.copyFileSync(source, destFilePath);
-}
-
-export function overrideLayerCodeJava(root: string, layerName: string, functionName: string) {
-  const destDir = path.join(getPathToFunction(root, layerName), 'lib', 'java', 'lib');
-  const srcDir = path.join(getPathToFunction(root, layerName), 'build', 'java', 'lib');
-
-  fs.copySync(srcDir, destDir);
-}
-
-const getPathToFunction = (root: string, funcName: string) => path.join(root, backendPathFor('function', funcName));
