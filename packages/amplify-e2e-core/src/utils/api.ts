@@ -2,12 +2,14 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import { TRANSFORM_CONFIG_FILE_NAME } from 'graphql-transformer-core';
 
-export function updateSchema(projectDir: string, projectName: string, schemaText: string) {
-  const schemaPath = path.join(projectDir, backendPathFor('api', projectName, 'schema.graphql'));
+export function updateSchema(context, projectDir: string, projectName: string, schemaText: string) {
+  const { getBackendDirPath } = context.pathManager
+  const schemaPath = path.join(projectDir, getBackendDirPath('api', projectName, 'schema.graphql'));
   fs.writeFileSync(schemaPath, schemaText);
 }
 
-export function updateConfig(projectDir: string, projectName: string, config: any = {}) {
-  const configPath = path.join(projectDir, backendPathFor('api', projectName, TRANSFORM_CONFIG_FILE_NAME));
+export function updateConfig(context, projectDir: string, projectName: string, config: any = {}) {
+  const { getBackendDirPath } = context.pathManager
+  const configPath = path.join(projectDir, getBackendDirPath('api', projectName, TRANSFORM_CONFIG_FILE_NAME));
   fs.writeFileSync(configPath, JSON.stringify(config, null, 4));
 }

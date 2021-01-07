@@ -116,8 +116,9 @@ function groupHasFile(group, name) {
  * @param {*} rootDir project root directory
  * @returns {string?}
  */
-function getSchemaFile(rootDir) {
-  const apiPatternPath = backendPathFor('api', '*', GRAPHQL_SCHEMA);
+function getSchemaFile(context, rootDir) {
+  const { getBackendDirPath } = context.pathManager
+  const apiPatternPath = getBackendDirPath('api', '*', GRAPHQL_SCHEMA);
   const schemaFilePattern = path.join(rootDir, apiPatternPath);
   const [schemaFile] = glob.sync(schemaFilePattern);
   return schemaFile;

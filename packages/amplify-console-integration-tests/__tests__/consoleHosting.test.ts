@@ -22,6 +22,7 @@ import { ORIGINAL_ENV, NEW_ENV } from '../src/consoleHosting/constants';
 
 describe('amplify console add hosting', () => {
   let projRoot: string;
+  let context, getBackendDirPath;
 
   const providersParam = {
     awscloudformation: {
@@ -31,8 +32,10 @@ describe('amplify console add hosting', () => {
     },
   };
 
-  beforeEach(async () => {
+  beforeEach(async () => {    
     projRoot = await createTestProject();
+    context = constructContext(projRoot)
+    getBackendDirPath = context.pathManager.getBackendDirPath
     await initJSProjectWithProfile(projRoot, providersParam);
   });
 
@@ -43,10 +46,9 @@ describe('amplify console add hosting', () => {
 
   // Manual tests
   it('add / publish / configure/ serve /remove hosting for manual deployment should succeed', async () => {
-    try {
-      await addManualHosting(projRoot);
-
-      expect(fs.existsSync(path.join(projRoot, backendPathFor('hosting', 'amplifyhosting')))).toBe(true);
+    try {      
+      await addManualHosting(projRoot);      
+      expect(fs.existsSync(path.join(projRoot, getBackendDirPath('hosting', 'amplifyhosting')))).toBe(true);
       const type = loadTypeFromTeamProviderInfo(projRoot, ORIGINAL_ENV);
       expect(type).toBe(TYPE_MANUAL);
       npmInstall(projRoot);
@@ -61,14 +63,14 @@ describe('amplify console add hosting', () => {
   it('when hosting is enabled, add new env should be able to deploy frontend successfully', async () => {
     await addManualHosting(projRoot);
     await addEnvironment(projRoot, { providersParam, envName: NEW_ENV });
-    expect(fs.existsSync(path.join(projRoot, backendPathFor('hosting', 'amplifyhosting')))).toBe(true);
+    expect(fs.existsSync(path.join(projRoot, getBackendDirPath('hosting', 'amplifyhosting')))).toBe(true);
     const type = loadTypeFromTeamProviderInfo(projRoot, NEW_ENV);
     expect(type).toBe(TYPE_MANUAL);
     npmInstall(projRoot);
     await amplifyPublish(projRoot);
 
     await removeHosting(projRoot);
-    expect(fs.existsSync(path.join(projRoot, backendPathFor('hosting', 'amplifyhosting')))).toBe(false);
+    expect(fs.existsSync(path.join(projRoot, getBackendDirPath('hosting', 'amplifyhosting')))).toBe(false);
     await amplifyPush(projRoot);
   });
 
@@ -85,7 +87,6 @@ describe('amplify console add hosting', () => {
   });
 
   it('amplify remove hosting should print out correct error message when there is no local hosting', async () => {
-    const context = constructContext()
     await removeNonExistingHosting(projRoot);
     await addManualHosting(projRoot);
     await amplifyPush(projRoot);
@@ -96,6 +97,6 @@ describe('amplify console add hosting', () => {
   // CICD tests
   it('when user does not add frontend in amplify console, no config file will be written in CLI', async () => {
     await addCICDHostingWithoutFrontend(projRoot);
-    expect(fs.existsSync(path.join(projRoot, backendPathFor('hosting', 'amplifyhosting')))).toBe(false);
+    expect(fs.existsSync(path.join(projRoot, getBackendDirPath('hosting', 'amplifyhosting')))).toBe(false);
   });
 });

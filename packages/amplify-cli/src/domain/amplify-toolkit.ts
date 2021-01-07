@@ -32,7 +32,7 @@ export class AmplifyToolkit {
   private _makeId: any;
   private _openEditor: any;
   private _onCategoryOutputsChange: any;
-  private _paths: PathManager;
+  private _paths: any;
   private _pathManager: any;
   private _pressEnterToContinue: any;
   private _pushResources: any;
@@ -232,8 +232,10 @@ export class AmplifyToolkit {
     this._pathManager = this._pathManager || require(path.join(this._amplifyHelpersDirPath, 'path-manager'));
     return this._pathManager;
   }
-  set pathManager(pathManager): any {
+
+  set pathManager(pathManager) {
     this._pathManager = pathManager
+    return this
   }
 
   get pressEnterToContinue(): any {
@@ -488,11 +490,11 @@ export class AmplifyToolkit {
 
     if (options.amplifyHelpersDirPath) {
       this.amplifyHelpersDirPath = options.amplifyHelpersDirPath
-    }   
+    }
     if (options.paths) {
       this.paths.extendPathConstants(options.paths)
-    }   
-     
+    }
+
     this._cleanUpTasks = new Array();
   }
 

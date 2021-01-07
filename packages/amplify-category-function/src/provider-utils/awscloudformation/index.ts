@@ -19,7 +19,6 @@ import fs from 'fs-extra';
 import path from 'path';
 import open from 'open';
 import { IsMockableResponse } from '../..';
-import { backendPathFor } from './path-utils';
 
 /**
  * Entry point for creating a new function
@@ -231,8 +230,9 @@ export async function updateFunctionResource(context, category, service, paramet
 
 function printLayerSuccessMessages(context: any, parameters: LayerParameters, action: string): void {
   const { print } = context;
+  const { getBackendDirPath } = context.pathManager
   const { layerName } = parameters;
-  const relativeDirPath = backendPathFor('function', layerName);
+  const relativeDirPath = getBackendDirPath('function', layerName);
   print.info(`✅ Lambda layer folders & files ${action}:`);
   print.info(relativeDirPath);
   print.info('');

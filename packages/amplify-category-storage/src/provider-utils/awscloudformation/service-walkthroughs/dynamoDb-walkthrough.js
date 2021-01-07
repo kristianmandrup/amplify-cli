@@ -4,7 +4,6 @@ const path = require('path');
 const fs = require('fs-extra');
 const uuid = require('uuid');
 const { ResourceDoesNotExistError, exitOnNextTick } = require('amplify-cli-core');
-const { backendPathFor } = require('./path-utils');
 
 // keep in sync with ServiceName in amplify-category-function, but probably it will not change
 const FunctionServiceNameLambdaFunction = 'Lambda';
@@ -811,7 +810,8 @@ function copyCfnTemplate(context, categoryName, resourceName, options) {
 }
 
 function migrate(context, projectPath, resourceName) {
-  const resourcePath = backendPathFor(category, resourceName);
+  const { getBackendDirPath } = context.pathManager
+  const resourcePath = getBackendDirPath(category, resourceName);
   const resourceDirPath = path.join(projectPath, resourcePath);
   const cfnFilePath = path.join(resourceDirPath, `${resourceName}-cloudformation-template.json`);
 

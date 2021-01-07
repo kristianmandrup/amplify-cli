@@ -30,7 +30,6 @@ import {
   fetchPermissionsForResourceInCategory,
 } from '../utils/permissionMapUtils';
 import { JSONUtilities } from 'amplify-cli-core';
-import { backendPathFor } from '../path-utils';
 
 /**
  * Starting point for CLI walkthrough that generates a lambda function
@@ -301,7 +300,8 @@ export async function updateWalkthrough(context, lambdaToUpdate?: string) {
 }
 
 export function migrate(context, projectPath, resourceName) {
-  const resourcePath = backendPathFor(category, resourceName);
+  const { getBackendDirPath } = context.pathManager
+  const resourcePath = getBackendDirPath(category, resourceName);
   const resourceDirPath = path.join(projectPath, resourcePath);
   const cfnFilePath = path.join(resourceDirPath, `${resourceName}-cloudformation-template.json`);
   const oldCfn: any = JSONUtilities.readJson(cfnFilePath);

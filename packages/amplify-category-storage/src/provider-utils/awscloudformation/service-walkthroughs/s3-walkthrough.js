@@ -1,5 +1,3 @@
-import { backendPathFor } from './path-utils';
-
 const inquirer = require('inquirer');
 const path = require('path');
 const fs = require('fs-extra');
