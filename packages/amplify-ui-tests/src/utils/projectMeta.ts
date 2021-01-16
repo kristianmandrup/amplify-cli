@@ -7,8 +7,9 @@ const metaFilePathDic = {
   ios: 'awsconfiguration.json',
 };
 
-export function getProjectMeta(projectRoot: string) {
-  const metaFilePath = join(projectRoot, amplifyPathFor('#current-cloud-backend', 'amplify-meta.json'));
+export function getProjectMeta(context, projectRoot: string) {
+  const { amplifyPathDir } = context.pathManager
+  const metaFilePath = join(projectRoot, amplifyPathDir('#current-cloud-backend', 'amplify-meta.json'));
   return JSON.parse(readFileSync(metaFilePath, 'utf8'));
 }
 export function existsAWSExportsPath(projectRoot: string, platform: string): boolean {

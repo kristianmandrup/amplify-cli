@@ -2,8 +2,9 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import { pathManager } from 'amplify-cli-core';
 
-function validateProject(projRoot: string, platform: string) {
-  expect(fs.existsSync(path.join(projRoot, amplifyPathFor())).toBeTruthy();
+function validateProject(context, projRoot: string, platform: string) {
+  const { amplifyPathDir } = context.pathManager
+  expect(fs.existsSync(path.join(projRoot, amplifyPathDir())).toBeTruthy();
   expect(fs.existsSync(path.join(projRoot, '.gitignore'))).toBeTruthy();
   switch (platform) {
     case 'android':
@@ -23,8 +24,9 @@ function validateProject(projRoot: string, platform: string) {
   }
 }
 
-function validateProjectConfig(projRoot: string, platform: string, framework?: string) {
-  const configPath = path.join(projRoot, amplifyPathFor('.config', 'project-config.json'));
+function validateProjectConfig(context, projRoot: string, platform: string, framework?: string) {
+  const { amplifyPathDir } = context.pathManager
+  const configPath = path.join(projRoot, amplifyPathDir('.config', 'project-config.json'));
   expect(fs.existsSync(configPath)).toBeTruthy();
   const configFile = fs.readFileSync(configPath);
   const config = JSON.parse(configFile.toString());

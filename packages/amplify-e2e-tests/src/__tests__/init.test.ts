@@ -9,11 +9,14 @@ import {
   amplifyStatus,
 } from 'amplify-e2e-core';
 import { createNewProjectDir, deleteProjectDir, getEnvVars, getProjectMeta } from 'amplify-e2e-core';
+import { constructContext } from '@amplify/cli'
 
 describe('amplify init', () => {
   let projRoot: string;
+  let context
   beforeEach(async () => {
     projRoot = await createNewProjectDir('init');
+    context = constructContext(projRoot)
   });
 
   afterEach(async () => {
@@ -101,9 +104,9 @@ describe('amplify init', () => {
 
   it('init the project simulate checked in local-env-info with wrong path', async () => {
     await initJSProjectWithProfile(projRoot, {});
-
+    const { amplifyPathDir } = context.pathManager
     // update <projRoot>/amplify/.config/local-env-info.json with nonexisting project path
-    const localEnvPath = path.join(projRoot, amplifyPathFor('.config', 'local-env-info.json'));
+    const localEnvPath = path.join(projRoot, amplifyPathDir('.config', 'local-env-info.json'));
     expect(fs.existsSync(localEnvPath)).toBe(true);
 
     const localEnvData = fs.readJsonSync(localEnvPath);

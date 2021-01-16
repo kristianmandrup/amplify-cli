@@ -21,6 +21,7 @@ import {
 } from 'amplify-e2e-core';
 import { TRANSFORM_CURRENT_VERSION } from 'graphql-transformer-core';
 import _ from 'lodash';
+import { constructContext } from '@amplify/cli'
 
 // to deal with bug in cognito-identity-js
 (global as any).fetch = require('node-fetch');
@@ -29,12 +30,15 @@ import _ from 'lodash';
 
 describe('amplify add api (GraphQL)', () => {
   let projRoot: string;
+  let context
   beforeEach(async () => {
     projRoot = await createNewProjectDir('graphql-api');
+    context = constructContext(projRoot)
   });
 
-  afterEach(async () => {
-    const metaFilePath = path.join(projRoot, amplifyPathFor('#current-cloud-backend', 'amplify-meta.json'));
+  afterEach(async () => {    
+    const { amplifyPathDir } = context.pathManager
+    const metaFilePath = path.join(projRoot, amplifyPathDir('#current-cloud-backend', 'amplify-meta.json'));
     if (existsSync(metaFilePath)) {
       await deleteProject(projRoot);
     }
