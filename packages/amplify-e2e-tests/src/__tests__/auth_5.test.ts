@@ -12,6 +12,7 @@ import { addAuthWithDefault, getBackendAmplifyMeta } from 'amplify-e2e-core';
 import { createNewProjectDir, deleteProjectDir, getProjectMeta, getUserPool } from 'amplify-e2e-core';
 import { AddAuthRequest, CognitoUserPoolSigninMethod, CognitoUserProperty, UpdateAuthRequest } from 'amplify-headless-interface';
 import _ from 'lodash';
+import { constructContext } from '@amplify/cli'
 
 const defaultsSettings = {
   name: 'authTest',
@@ -19,12 +20,14 @@ const defaultsSettings = {
 
 describe('headless auth', () => {
   let projRoot: string;
+  let context
   beforeEach(async () => {
     projRoot = await createNewProjectDir('auth-update');
+    context = constructContext(projRoot)
   });
 
   afterEach(async () => {
-    await deleteProject(projRoot);
+    await deleteProject(context, projRoot);
     deleteProjectDir(projRoot);
   });
   it('adds auth resource', async () => {

@@ -1,7 +1,7 @@
 import { nspawn as spawn, retry, getCLIPath, describeCloudFormationStack, getProjectMeta } from '..';
 
-export const deleteProject = async (cwd: string, profileConfig?: any) => {
-  const { StackName: stackName, Region: region } = getProjectMeta(cwd).providers.awscloudformation;
+export const deleteProject = async (context, cwd: string, profileConfig?: any) => {
+  const { StackName: stackName, Region: region } = getProjectMeta(context, cwd).providers.awscloudformation;
   await retry(
     () => describeCloudFormationStack(stackName, region, profileConfig),
     stack => stack.StackStatus.endsWith('_COMPLETE'),
@@ -14,7 +14,7 @@ export const deleteProject = async (cwd: string, profileConfig?: any) => {
       .wait('Project deleted locally.')
       .run((err: Error) => {
         if (!err) {
-          resolve();
+          resolve(null);
         } else {
           reject(err);
         }

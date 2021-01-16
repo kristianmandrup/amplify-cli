@@ -15,6 +15,7 @@ import {
   getLambdaFunction,
 } from 'amplify-e2e-core';
 import _ from 'lodash';
+import { constructContext } from '@amplify/cli'
 
 const defaultsSettings = {
   name: 'authTest',
@@ -22,12 +23,14 @@ const defaultsSettings = {
 
 describe('amplify add auth...', () => {
   let projRoot: string;
+  let context
   beforeEach(async () => {
     projRoot = await createNewProjectDir('auth');
+    context = constructContext(projRoot)
   });
 
   afterEach(async () => {
-    await deleteProject(projRoot);
+    await deleteProject(context, projRoot);
     deleteProjectDir(projRoot);
   });
 
@@ -36,7 +39,7 @@ describe('amplify add auth...', () => {
     await addAuthWithDefault(projRoot, {});
     await amplifyPushAuth(projRoot);
 
-    const amplifyMeta = getBackendAmplifyMeta(projRoot);
+    const amplifyMeta = getBackendAmplifyMeta(context, projRoot);
     const { AuthRoleName, UnauthRoleName } = amplifyMeta.providers.awscloudformation;
     const cognitoResource = Object.values(amplifyMeta.auth).find((res: any) => {
       return res.service === 'Cognito';

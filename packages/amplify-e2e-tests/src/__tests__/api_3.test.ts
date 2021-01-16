@@ -35,7 +35,7 @@ describe('amplify add api (GraphQL)', () => {
     const { amplifyPathDir } = context.pathManager
     const metaFilePath = path.join(projRoot, amplifyPathDir('#current-cloud-backend', 'amplify-meta.json'));
     if (existsSync(metaFilePath)) {
-      await deleteProject(projRoot);
+      await deleteProject(context, projRoot);
     }
     deleteProjectDir(projRoot);
   });
@@ -45,7 +45,7 @@ describe('amplify add api (GraphQL)', () => {
     await initJSProjectWithProfile(projRoot, { name });
     await addApiWithSchema(projRoot, 'simple_model.graphql');
 
-    const transformConfig = getTransformConfig(projRoot, name);
+    const transformConfig = getTransformConfig(context, projRoot, name);
     expect(transformConfig).toBeDefined();
     expect(transformConfig.Version).toBeDefined();
     expect(transformConfig.Version).toEqual(TRANSFORM_CURRENT_VERSION);
@@ -144,9 +144,9 @@ describe('amplify add api (GraphQL)', () => {
     expect(graphqlApi).toBeDefined();
     expect(graphqlApi.apiId).toEqual(GraphQLAPIIdOutput);
 
-    expect(getTransformConfig(projRoot, 'myApiName')).toMatchSnapshot();
+    expect(getTransformConfig(context, projRoot, 'myApiName')).toMatchSnapshot();
     expect(output.authConfig).toMatchSnapshot();
-    expect(getProjectSchema(projRoot, 'myApiName')).toMatchSnapshot();
+    expect(getProjectSchema(context, projRoot, 'myApiName')).toMatchSnapshot();
   });
 
   it('removes AppSync API in headless mode', async () => {

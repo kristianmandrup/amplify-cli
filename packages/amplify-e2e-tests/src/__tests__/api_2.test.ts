@@ -40,7 +40,7 @@ describe('amplify add api (GraphQL)', () => {
     const { amplifyPathDir } = context.pathManager
     const metaFilePath = path.join(projRoot, amplifyPathDir('#current-cloud-backend', 'amplify-meta.json'));
     if (existsSync(metaFilePath)) {
-      await deleteProject(projRoot);
+      await deleteProject(context, projRoot);
     }
     deleteProjectDir(projRoot);
   });
@@ -145,7 +145,7 @@ describe('amplify add api (GraphQL)', () => {
     expect(graphqlApi).toBeDefined();
     expect(graphqlApi.apiId).toEqual(GraphQLAPIIdOutput);
 
-    const transformConfig = getTransformConfig(projRoot, name);
+    const transformConfig = getTransformConfig(context, projRoot, name);
     expect(transformConfig).toBeDefined();
     expect(transformConfig.Version).toBeDefined();
     expect(transformConfig.Version).toEqual(TRANSFORM_CURRENT_VERSION);
@@ -157,7 +157,7 @@ describe('amplify add api (GraphQL)', () => {
     // remove datastore feature
     await apiUpdateToggleDataStore(projRoot, {});
     await amplifyPushUpdate(projRoot);
-    const disableDSConfig = getTransformConfig(projRoot, name);
+    const disableDSConfig = getTransformConfig(context, projRoot, name);
     expect(disableDSConfig).toBeDefined();
     expect(_.isEmpty(disableDSConfig.ResolverConfig)).toBe(true);
   });
@@ -167,7 +167,7 @@ describe('amplify add api (GraphQL)', () => {
     await initJSProjectWithProfile(projRoot, { name });
     await addApiWithSchemaAndConflictDetection(projRoot, 'simple_model.graphql');
 
-    let transformConfig = getTransformConfig(projRoot, name);
+    let transformConfig = getTransformConfig(context, projRoot, name);
     expect(transformConfig).toBeDefined();
     expect(transformConfig.ResolverConfig).toBeDefined();
     expect(transformConfig.ResolverConfig.project).toBeDefined();
@@ -218,13 +218,13 @@ describe('amplify add api (GraphQL)', () => {
     expect(graphqlApi.apiId).toEqual(GraphQLAPIIdOutput);
 
     // check project doesn't have datastore
-    const withoutDSConfig = getTransformConfig(projRoot, name);
+    const withoutDSConfig = getTransformConfig(context, projRoot, name);
     expect(withoutDSConfig).toBeDefined();
     expect(_.isEmpty(withoutDSConfig.ResolverConfig)).toBe(true);
 
     // amplify update api to enable datastore
     await apiUpdateToggleDataStore(projRoot, {});
-    let transformConfigWithDS = getTransformConfig(projRoot, name);
+    let transformConfigWithDS = getTransformConfig(context, projRoot, name);
     expect(transformConfigWithDS).toBeDefined();
     expect(transformConfigWithDS.ResolverConfig).toBeDefined();
     expect(transformConfigWithDS.ResolverConfig.project).toBeDefined();
@@ -265,8 +265,10 @@ describe('amplify add api (GraphQL)', () => {
 
 describe('amplify add api (REST)', () => {
   let projRoot: string;
+  let context
   beforeEach(async () => {
     projRoot = await createNewProjectDir('rest-api');
+    context = constructContext(projRoot)
   });
 
   afterEach(async () => {
@@ -309,7 +311,7 @@ describe('amplify add api (REST)', () => {
     }
     expect(seenAtLeastOneFunc).toBeTruthy();
 
-    await deleteProject(projRoot);
+    await deleteProject(context, projRoot);
     deleteProjectDir(projRoot);
   });
 

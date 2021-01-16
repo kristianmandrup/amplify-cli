@@ -251,7 +251,7 @@ export const functionBuild = (cwd: string, settings: any) => {
       .sendEof()
       .run((err: Error) => {
         if (!err) {
-          resolve();
+          resolve(null);
         } else {
           reject(err);
         }
@@ -418,15 +418,16 @@ export const functionMockAssert = (cwd: string, settings: { funcName: string; su
       .wait(settings.successString)
       .wait('Finished execution.')
       .sendEof()
-      .run(err => (err ? reject(err) : resolve()));
+      .run(err => (err ? reject(err) : resolve(null)));
   });
 };
 
 export const functionCloudInvoke = async (
+  context,
   cwd: string,
   settings: { funcName: string; payload: string },
 ): Promise<Lambda.InvocationResponse> => {
-  const meta = getProjectMeta(cwd);
+  const meta = getProjectMeta(context, cwd);
   const lookupName = settings.funcName;
   expect(meta.function[lookupName]).toBeDefined();
   const { Name: functionName, Region: region } = meta.function[lookupName].output;

@@ -176,7 +176,7 @@ describe('amplify add api (GraphQL)', () => {
     expect(graphqlApi).toBeDefined();
     expect(graphqlApi.apiId).toEqual(GraphQLAPIIdOutput);
 
-    const transformConfig = getTransformConfig(projRoot, name);
+    const transformConfig = getTransformConfig(context, projRoot, name);
     expect(transformConfig).toBeDefined();
     expect(transformConfig.Version).toBeDefined();
     expect(transformConfig.Version).toEqual(TRANSFORM_CURRENT_VERSION);

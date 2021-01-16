@@ -96,7 +96,7 @@ describe('api migration update test', () => {
     await initJSProjectWithProfile(projRoot, { name });
     await addApiWithSchemaAndConflictDetection(projRoot, 'simple_model.graphql');
 
-    let transformConfig = getTransformConfig(projRoot, name);
+    let transformConfig = getTransformConfig(context, projRoot, name);
     expect(transformConfig).toBeDefined();
     expect(transformConfig.ResolverConfig).toBeDefined();
     expect(transformConfig.ResolverConfig.project).toBeDefined();
@@ -106,7 +106,7 @@ describe('api migration update test', () => {
     //update and push with codebase
     await updateAPIWithResolutionStrategy(projRoot, { testingWithLatestCodebase: true });
 
-    transformConfig = getTransformConfig(projRoot, name);
+    transformConfig = getTransformConfig(context, projRoot, name);
     expect(transformConfig).toBeDefined();
     expect(transformConfig.Version).toBeDefined();
     expect(transformConfig.Version).toEqual(TRANSFORM_CURRENT_VERSION);
