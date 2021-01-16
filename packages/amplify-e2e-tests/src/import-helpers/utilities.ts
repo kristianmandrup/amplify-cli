@@ -114,15 +114,17 @@ export const getOGAuthProjectDetails = (projectRoot: string): AuthProjectDetails
   };
 };
 
-export const readResourceParametersJson = (projectRoot: string, category: string, resourceName: string): $TSObject => {
-  const parametersFilePath = path.join(projectRoot, backendPathFor(category, resourceName, 'parameters.json'));
+export const readResourceParametersJson = (context, projectRoot: string, category: string, resourceName: string): $TSObject => {
+  const { backendPathDir } = context.pathManager
+  const parametersFilePath = path.join(projectRoot, backendPathDir(category, resourceName, 'parameters.json'));
   const parameters = JSONUtilities.readJson(parametersFilePath);
 
   return parameters;
 };
 
-export const readRootStack = (projectRoot: string): $TSObject => {
-  const rootStackFilePath = path.join(projectRoot, backendPathFor('awscloudformation', 'nested-cloudformation-stack.yml'));
+export const readRootStack = (context, projectRoot: string): $TSObject => {
+  const { backendPathDir } = context.pathManager
+  const rootStackFilePath = path.join(projectRoot, backendPathDir('awscloudformation', 'nested-cloudformation-stack.yml'));
   const rootStack = JSONUtilities.readJson(rootStackFilePath);
 
   return rootStack;

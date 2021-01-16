@@ -5,12 +5,16 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import _ from 'lodash';
 import { JSONUtilities } from 'amplify-cli-core';
+const { constructContext } = require('@aws-amplify/cli')
 
 describe('amplify add analytics', () => {
   let projRoot: string;
+  let context, backendDirPathFor
 
   beforeEach(async () => {
     projRoot = await createNewProjectDir('analytics');
+    context = constructContext(projRoot)
+    backendDirPathFor = context.pathManager.backendDirPathFor
   });
 
   afterEach(async () => {
@@ -71,7 +75,7 @@ describe('amplify add analytics', () => {
     await addPinpoint(projRoot, { rightName, wrongName: '$' });
     await amplifyPushUpdate(projRoot);
     expect(fs.existsSync(path.join(projRoot, 'lib', 'amplifyconfiguration.dart'))).toBe(true);
-    expect(fs.existsSync(path.join(projRoot, backendPathFor('analytics', rightName)))).toBe(true);
+    expect(fs.existsSync(path.join(projRoot, backendDirPathFor('analytics', rightName)))).toBe(true);
   });
 
   it('add kinesis', async () => {
@@ -80,6 +84,6 @@ describe('amplify add analytics', () => {
     const rightName = `myapp${random}`;
     await addKinesis(projRoot, { rightName, wrongName: '$' });
     await amplifyPushUpdate(projRoot);
-    expect(fs.existsSync(path.join(projRoot, backendPathFor('analytics', rightName)))).toBe(true);
+    expect(fs.existsSync(path.join(projRoot, backendDirPathFor('analytics', rightName)))).toBe(true);
   });
 });

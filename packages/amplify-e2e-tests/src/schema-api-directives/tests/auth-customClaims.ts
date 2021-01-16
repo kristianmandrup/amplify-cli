@@ -33,8 +33,9 @@ export async function runTest(projectDir: string, testModule: any) {
   await testMutation(appSyncClient, createPostMutation, undefined, expected_result_createPostMutation);
 }
 
-export function updateTriggerHandler(projectDir: string) {
-  const backendFunctionDirPath = path.join(projectDir, backendPathFor('function'));
+export function updateTriggerHandler(context, projectDir: string) {
+  const { backendPathDir } = context.pathManager
+  const backendFunctionDirPath = path.join(projectDir, backendPathDir('function'));
   const functionName = fs.readdirSync(backendFunctionDirPath)[0];
   const triggerHandlerFilePath = path.join(backendFunctionDirPath, functionName, 'src', 'alter-claims.js');
   fs.writeFileSync(triggerHandlerFilePath, func);

@@ -31,8 +31,8 @@ export async function addSimpleFunction(projectDir: string, testModule: any, fun
     },
     'nodejs',
   );
-
-  const amplifyBackendDirPath = path.join(projectDir, backendPathFor());
+  const { backendPathDir } = context.pathManager
+  const amplifyBackendDirPath = path.join(projectDir, backendPathDir());
   const amplifyFunctionIndexFilePath = path.join(amplifyBackendDirPath, 'function', functionName, 'src', 'index.js');
 
   fs.writeFileSync(amplifyFunctionIndexFilePath, testModule[funcName]);
@@ -46,8 +46,9 @@ export function randomizedFunctionName(functionName: string) {
   return `${functionName}${shortId}`;
 }
 
-export function updateFunctionNameInSchema(projectDir: string, functionNamePlaceHolder: string, functionName: string) {
-  const backendApiDirPath = path.join(projectDir, backendPathFor('api'));
+export function updateFunctionNameInSchema(context, projectDir: string, functionNamePlaceHolder: string, functionName: string) {
+  const { backendPathDir } = context.pathManager
+  const backendApiDirPath = path.join(projectDir, backendPathDir('api'));
   const apiResDirName = fs.readdirSync(backendApiDirPath)[0];
   const amplifySchemaFilePath = path.join(backendApiDirPath, apiResDirName, 'schema.graphql');
 

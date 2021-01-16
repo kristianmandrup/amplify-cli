@@ -181,9 +181,9 @@ describe('auth import userpool only', () => {
     await amplifyPushAuth(projectRoot);
 
     const projectDetails = getAuthProjectDetails(projectRoot);
-
+    const { backendPathDirFor } = context.pathManager
     // Verify that index.js gets the userpool env var name injected
-    const amplifyBackendDirPath = path.join(projectRoot, backendPathFor());
+    const amplifyBackendDirPath = path.join(projectRoot, backendPathDirFor());
     const functionFilePath = path.join(amplifyBackendDirPath, 'function', functionName);
     const amplifyFunctionIndexFilePath = path.join(functionFilePath, 'src', 'index.js');
     const cognitoResourceNameUpperCase = projectDetails.authResourceName.toUpperCase();

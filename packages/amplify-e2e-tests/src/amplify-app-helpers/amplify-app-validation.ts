@@ -52,8 +52,9 @@ function validateProjectConfig(projRoot: string, platform: string, framework?: s
   }
 }
 
-function validateApi(projRoot: string) {
-  const apiPath = path.join(projRoot, backendPathFor('api', 'amplifyDatasource'));
+function validateApi(contex, projRoot: string) {
+  const { backendPathDir } = context.pathManager
+  const apiPath = path.join(projRoot, backendPathDir('api', 'amplifyDatasource'));
   expect(fs.existsSync(path.join(apiPath, 'schema.graphql'))).toBeTruthy();
   expect(fs.existsSync(path.join(apiPath, 'transform.conf.json'))).toBeTruthy();
   const transformConfFile = fs.readFileSync(path.join(apiPath, 'transform.conf.json'));
@@ -62,8 +63,9 @@ function validateApi(projRoot: string) {
   expect(transformConf['ResolverConfig']['project']['ConflictDetection']).toBe('VERSION');
 }
 
-function validateBackendConfig(projRoot: string) {
-  const backendConfigPath = path.join(projRoot, backendPathFor('backend-config.json'));
+function validateBackendConfig(context, projRoot: string) {
+  const { backendPathDir } = context.pathManager
+  const backendConfigPath = path.join(projRoot, backendPathDir('backend-config.json'));
   expect(fs.existsSync(backendConfigPath)).toBeTruthy();
   const backendConfigFile = fs.readFileSync(backendConfigPath);
   const backendConfig = JSON.parse(backendConfigFile.toString());
@@ -78,10 +80,11 @@ function validateModelgen(projRoot: string) {
   expect(fs.existsSync(path.join(modelsDir, 'schema.js'))).toBeTruthy();
 }
 
-function validateAmplifyPush(projRoot: string) {
+function validateAmplifyPush(context, projRoot: string) {
+  const { amplifyPathDir, backendPathDir } = context.pathManager
   expect(fs.existsSync(path.join(projRoot, 'src', 'aws-exports.js'))).toBeTruthy();
-  expect(fs.existsSync(path.join(projRoot, amplifyPathFor('team-provider-info.json')))).toBeTruthy();
-  expect(fs.existsSync(path.join(projRoot, backendPathFor('amplify-meta.json')))).toBeTruthy();
+  expect(fs.existsSync(path.join(projRoot, amplifyPathDir('team-provider-info.json')))).toBeTruthy();
+  expect(fs.existsSync(path.join(projRoot, backendPathDir('amplify-meta.json')))).toBeTruthy();
 }
 
 function validateFeatureFlags(projRoot: string) {

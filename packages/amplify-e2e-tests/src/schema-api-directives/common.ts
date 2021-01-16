@@ -76,7 +76,8 @@ export async function runMultiAutTest(projectDir: string, testModule: any) {
 }
 
 export function updateSchemaInTestProject(projectDir: string, schema: any) {
-  const backendApiDirPath = path.join(projectDir, backendPathFor('api'));
+  const { backendPathDir } = context.pathManager
+  const backendApiDirPath = path.join(projectDir, backendPathDir('api'));
   const apiResDirName = fs.readdirSync(backendApiDirPath)[0];
   const backendSchemaFilePath = path.join(backendApiDirPath, apiResDirName, 'schema.graphql');
   fs.writeFileSync(backendSchemaFilePath, schema);

@@ -32,7 +32,8 @@ describe('amplify add hosting', () => {
   });
 
   it('push creates correct amplify artifacts', async () => {
-    expect(fs.existsSync(path.join(projRoot, backendPathFor('hosting', 'S3AndCloudFront')))).toBe(true);
+    const { backendPathDirFor } = context.pathManager
+    expect(fs.existsSync(path.join(projRoot, backendPathDirFor('hosting', 'S3AndCloudFront')))).toBe(true);
     const projectMeta = getProjectMeta(projRoot);
     expect(projectMeta.hosting).toBeDefined();
     expect(projectMeta.hosting.S3AndCloudFront).toBeDefined(); //CloudFrontDistributionID

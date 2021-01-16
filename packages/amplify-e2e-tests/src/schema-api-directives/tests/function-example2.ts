@@ -66,8 +66,8 @@ export async function addFunctionWithAuthAccess(projectDir: string, testModule: 
     },
     'nodejs',
   );
-
-  const amplifyBackendDirPath = path.join(projectDir, backendPathFor());
+  const { backendPathDir } = context.pathManager
+  const amplifyBackendDirPath = path.join(projectDir, backendPathDir());
   const amplifyFunctionIndexFilePath = path.join(amplifyBackendDirPath, 'function', functionName, 'src', 'index.js');
 
   fs.writeFileSync(amplifyFunctionIndexFilePath, testModule[funcName]);

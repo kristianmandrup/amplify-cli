@@ -152,7 +152,7 @@ async function amplifyCLIVersionCheck() {
  * @returns {Promise<void>}
  */
 const createAmplifySkeletonProject = async (context, frontend, opts) => {
-  const backendPath = context.amplify.pathManager.getBackendDirPath();
+  const backendPath = context.pathManager.getBackendDirPath();
   if (fs.existsSync(backendPath) && frontend !== 'ios') {
     console.log(
       `An Amplify project is already initialized in your current working directory ${emoji.get('smiley')}. Not generating base project.\n`,
@@ -171,7 +171,7 @@ const createAmplifySkeletonProject = async (context, frontend, opts) => {
 
 // TODO: add context
 const updateFrameworkInProjectConfig = (context, framework) => {
-  const projectConfigFilePath = context.amplify.pathManager.getAmplifyDirPathFor('.config', 'project-config.json');
+  const projectConfigFilePath = context.pathManager.getAmplifyDirPathFor('.config', 'project-config.json');
   const projectConfig = JSON.parse(fs.readFileSync(projectConfigFilePath, 'utf8'));
 
   if (framework && projectConfig.javascript) {

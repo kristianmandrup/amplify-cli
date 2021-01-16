@@ -47,7 +47,8 @@ describe('amplify add api (GraphQL)', () => {
     expect(transformConfig.Version).toEqual(TRANSFORM_CURRENT_VERSION);
 
     transformConfig.Version = TRANSFORM_BASE_VERSION;
-    const apiRoot = path.join(projRoot, backendPathFor('api', name));
+    const { backendPathDirFor } = context.pathManager
+    const apiRoot = path.join(projRoot, backendPathDirFor('api', name));
     writeTransformerConfiguration(apiRoot, transformConfig);
 
     await amplifyPush(projRoot);

@@ -9,12 +9,15 @@ import fs from 'fs-extra';
 import path from 'path';
 import { readJsonFile } from 'amplify-e2e-core';
 import _ from 'lodash';
+import { constructContext } from '@amplify/cli'
 
 describe('nodejs', () => {
   describe('amplify add function with additional permissions', () => {
     let projRoot: string;
+    let context
     beforeEach(async () => {
       projRoot = await createNewProjectDir('fn-with-perm');
+      context = constructContext(projRoot)
     });
 
     afterEach(async () => {
@@ -217,8 +220,9 @@ describe('nodejs', () => {
         },
         'nodejs',
       );
+      const { backendPathDirFor } = context.pathManager
       const lambdaHandlerContents = fs.readFileSync(
-        path.join(projRoot, backendPathFor('function', funcName, 'src', 'index.js')),
+        path.join(projRoot, backendPathDirFor('function', funcName, 'src', 'index.js')),
         'utf8',
       );
       expect(lambdaHandlerContents).toMatchSnapshot();
@@ -248,9 +252,9 @@ describe('nodejs', () => {
         },
         'nodejs',
       );
-
+      const { backendPathDirFor } = context.pathManager
       const lambdaCFN = readJsonFile(
-        path.join(projRoot, backendPathFor('function', fnName, `${fnName}-cloudformation-template.json`)),
+        path.join(projRoot, backendPathDirFor('function', fnName, `${fnName}-cloudformation-template.json`)),
       );
       expect(lambdaCFN.Resources.AmplifyResourcesPolicy.Properties.PolicyDocument.Statement.length).toBe(3);
     });
@@ -307,9 +311,9 @@ describe('nodejs', () => {
         },
         'nodejs',
       );
-
-      const configPath = path.join(projRoot, backendPathFor('backend-config.json'));
-      const metaPath = path.join(projRoot, backendPathFor('amplify-meta.json'));
+      const { backendPathDirFor } = context.pathManager
+      const configPath = path.join(projRoot, backendPathDirFor('backend-config.json'));
+      const metaPath = path.join(projRoot, backendPathDirFor('amplify-meta.json'));
       const functionConfig = readJsonFile(configPath).function[fnName];
       const functionMeta = readJsonFile(metaPath).function[fnName];
       delete functionMeta.lastPushTimeStamp;
@@ -344,9 +348,9 @@ describe('nodejs', () => {
         },
         'nodejs',
       );
-
+      const { backendPathDirFor } = context.pathManager
       const lambdaCFN = readJsonFile(
-        path.join(projRoot, backendPathFor('function', fnName, `${fnName}-cloudformation-template.json`)),
+        path.join(projRoot, backendPathDirFor('function', fnName, `${fnName}-cloudformation-template.json`)),
       );
       const envVarsObj = lambdaCFN.Resources.LambdaFunction.Properties.Environment.Variables;
       expect(_.keys(envVarsObj)).toContain(`API_${apiName.toUpperCase()}_GRAPHQLAPIKEYOUTPUT`);

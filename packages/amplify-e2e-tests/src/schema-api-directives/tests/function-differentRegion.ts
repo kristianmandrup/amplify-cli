@@ -61,8 +61,8 @@ async function setupFunction(functionProjectDirPath: string, functionRegion: str
     },
     'nodejs',
   );
-
-  const amplifyBackendDirPath = path.join(functionProjectDirPath, backendPathFor());
+  const { backendPathDir } = context.pathManager
+  const amplifyBackendDirPath = path.join(functionProjectDirPath, backendPathDir());
   const amplifyFunctionIndexFilePath = path.join(amplifyBackendDirPath, 'function', functionName, 'src', 'index.js');
 
   fs.writeFileSync(amplifyFunctionIndexFilePath, func);
@@ -80,8 +80,9 @@ async function deleteFunctionProject(functionProjectDirPath: string) {
   deleteProjectDir(functionProjectDirPath);
 }
 
-function updateFunctionNameAndRegionInSchema(projectDir: string, functionName: string, functionRegion: string) {
-  const backendApiDirPath = path.join(projectDir, backendPathFor('api'));
+function updateFunctionNameAndRegionInSchema(context, projectDir: string, functionName: string, functionRegion: string) {
+  const { backendPathDir } = context.pathManager
+  const backendApiDirPath = path.join(projectDir, backendPathDir('api'));
   const apiResDirName = fs.readdirSync(backendApiDirPath)[0];
   const amplifySchemaFilePath = path.join(backendApiDirPath, apiResDirName, 'schema.graphql');
 
