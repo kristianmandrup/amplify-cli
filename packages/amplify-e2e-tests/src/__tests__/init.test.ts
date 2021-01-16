@@ -26,7 +26,7 @@ describe('amplify init', () => {
 
   it('should init the project and create new env', async () => {
     await initJSProjectWithProfile(projRoot, {});
-    const meta = getProjectMeta(projRoot).providers.awscloudformation;
+    const meta = getProjectMeta(context, projRoot).providers.awscloudformation;
     expect(meta.Region).toBeDefined();
     const { AuthRoleName, UnauthRoleName, UnauthRoleArn, AuthRoleArn, DeploymentBucketName } = meta;
 
@@ -36,7 +36,7 @@ describe('amplify init', () => {
 
     // init new env
     await initNewEnvWithProfile(projRoot, { envName: 'foo' });
-    const newEnvMeta = getProjectMeta(projRoot).providers.awscloudformation;
+    const newEnvMeta = getProjectMeta(context, projRoot).providers.awscloudformation;
 
     const {
       AuthRoleName: newEnvAuthRoleName,
@@ -67,7 +67,7 @@ describe('amplify init', () => {
       secretAccessKey: SECRET_ACCESS_KEY,
     });
 
-    const meta = getProjectMeta(projRoot).providers.awscloudformation;
+    const meta = getProjectMeta(context, projRoot).providers.awscloudformation;
     expect(meta.Region).toBeDefined();
     const { AuthRoleName, UnauthRoleName, UnauthRoleArn, AuthRoleArn, DeploymentBucketName } = meta;
 
@@ -81,7 +81,7 @@ describe('amplify init', () => {
       accessKeyId: ACCESS_KEY_ID,
       secretAccessKey: SECRET_ACCESS_KEY,
     });
-    const newEnvMeta = getProjectMeta(projRoot).providers.awscloudformation;
+    const newEnvMeta = getProjectMeta(context, projRoot).providers.awscloudformation;
 
     const {
       AuthRoleName: newEnvAuthRoleName,

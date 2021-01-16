@@ -82,7 +82,7 @@ describe('amplify add/update/remove function based on schedule rule', () => {
     );
     await functionBuild(projRoot, {});
     await amplifyPushAuth(projRoot);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const { Arn: functionArn, Name: functionName, Region: region, CloudWatchEventRule: ruleName } = Object.keys(meta.function).map(
       key => meta.function[key],
     )[0].output;
@@ -121,7 +121,7 @@ describe('amplify add/update/remove function based on schedule rule', () => {
       'nodejs',
     );
     await amplifyPushAuth(projRoot);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const { Arn: functionArn, Name: functionName, Region: region, CloudWatchEventRule: ruleName } = Object.keys(meta.function).map(
       key => meta.function[key],
     )[0].output;
@@ -161,7 +161,7 @@ describe('amplify add/update/remove function based on schedule rule', () => {
       'nodejs',
     );
     await amplifyPushAuth(projRoot);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const { Arn: functionArn, Name: functionName, Region: region, CloudWatchEventRule: ruleName } = Object.keys(meta.function).map(
       key => meta.function[key],
     )[0].output;

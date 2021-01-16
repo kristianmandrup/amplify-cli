@@ -32,7 +32,7 @@ describe('amplify auth migration', () => {
     await initJSProjectWithProfile(projRoot, { name: 'authMigration' });
     await addAuthWithCustomTrigger(projRoot, {});
     await amplifyPushAuth(projRoot);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
 
     const functionName = `${Object.keys(meta.auth)[0]}PreSignup-integtest`;
 

@@ -51,7 +51,7 @@ describe('amplify add api (GraphQL)', () => {
     await addApiWithSchemaAndConflictDetection(projRoot, 'key-conflict-detection.graphql');
     await amplifyPush(projRoot);
 
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const region = meta['providers']['awscloudformation']['Region'] as string;
     const { output } = meta.api[name];
     const url = output.GraphQLAPIEndpointOutput as string;
@@ -133,7 +133,7 @@ describe('amplify add api (GraphQL)', () => {
     await addApiWithSchemaAndConflictDetection(projRoot, 'simple_model.graphql');
     await amplifyPush(projRoot);
 
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const { output } = meta.api[name];
     const { GraphQLAPIIdOutput, GraphQLAPIEndpointOutput, GraphQLAPIKeyOutput } = output;
     const { graphqlApi } = await getAppSyncApi(GraphQLAPIIdOutput, meta.providers.awscloudformation.Region);
@@ -176,7 +176,7 @@ describe('amplify add api (GraphQL)', () => {
 
     await updateAPIWithResolutionStrategy(projRoot, {});
 
-    transformConfig = getTransformConfig(projRoot, name);
+    transformConfig = getTransformConfig(context, projRoot, name);
     expect(transformConfig).toBeDefined();
     expect(transformConfig.Version).toBeDefined();
     expect(transformConfig.Version).toEqual(TRANSFORM_CURRENT_VERSION);
@@ -186,7 +186,7 @@ describe('amplify add api (GraphQL)', () => {
     expect(transformConfig.ResolverConfig.project.ConflictHandler).toEqual('OPTIMISTIC_CONCURRENCY');
 
     await amplifyPush(projRoot);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const { output } = meta.api[name];
     const { GraphQLAPIIdOutput, GraphQLAPIEndpointOutput, GraphQLAPIKeyOutput } = output;
     const { graphqlApi } = await getAppSyncApi(GraphQLAPIIdOutput, meta.providers.awscloudformation.Region);
@@ -205,7 +205,7 @@ describe('amplify add api (GraphQL)', () => {
     await addApiWithSchema(projRoot, 'simple_model.graphql');
     await amplifyPush(projRoot);
 
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const { output } = meta.api[name];
     const { GraphQLAPIIdOutput, GraphQLAPIEndpointOutput, GraphQLAPIKeyOutput } = output;
     const { graphqlApi } = await getAppSyncApi(GraphQLAPIIdOutput, meta.providers.awscloudformation.Region);
@@ -245,7 +245,7 @@ describe('amplify add api (GraphQL)', () => {
   //     }
   //   });
   //   await amplifyPush(projRoot);
-  //   const projectMeta = getProjectMeta(projRoot);
+  //   const projectMeta = getProjectMeta(context, projRoot);
   //   const region = projectMeta.providers.awscloudformation.Region;
   //   const { output } = projectMeta.api[projectName];
   //   const { GraphQLAPIIdOutput, GraphQLAPIEndpointOutput, GraphQLAPIKeyOutput } = output;
@@ -270,7 +270,7 @@ describe('amplify add api (REST)', () => {
   });
 
   afterEach(async () => {
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     expect(meta.providers.awscloudformation).toBeDefined();
     const {
       AuthRoleArn: authRoleArn,
@@ -321,7 +321,7 @@ describe('amplify add api (REST)', () => {
     await addRestApi(projRoot, { isCrud: true });
     await amplifyPushUpdate(projRoot);
 
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     expect(meta.storage[DDB_NAME]).toBeDefined();
     const { service, lastPushTimeStamp, lastPushDirHash } = meta.storage[DDB_NAME];
     expect(service).toBe('DynamoDB');

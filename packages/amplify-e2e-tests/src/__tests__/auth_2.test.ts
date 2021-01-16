@@ -30,7 +30,7 @@ describe('amplify add auth...', () => {
     await addAuthWithDefaultSocial(projRoot, {});
     expect(isDeploymentSecretForEnvExists(projRoot, 'integtest')).toBeTruthy();
     await amplifyPushAuth(projRoot);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     expect(isDeploymentSecretForEnvExists(projRoot, 'integtest')).toBeFalsy();
     const authMeta = Object.keys(meta.auth).map(key => meta.auth[key])[0];
     const id = authMeta.output.UserPoolId;
@@ -49,7 +49,7 @@ describe('amplify add auth...', () => {
     await initJSProjectWithProfile(projRoot, defaultsSettings);
     await addAuthWithGroupTrigger(projRoot, {});
     await amplifyPushAuth(projRoot);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
 
     const functionName = `${Object.keys(meta.auth)[0]}PostConfirmation-integtest`;
 
@@ -70,7 +70,7 @@ describe('amplify add auth...', () => {
     await initJSProjectWithProfile(projRoot, defaultsSettings);
     await addAuthViaAPIWithTrigger(projRoot, {});
     await amplifyPush(projRoot);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
 
     const functionName = `${Object.keys(meta.auth)[0]}PostConfirmation-integtest`;
     const authMeta = Object.keys(meta.auth).map(key => meta.auth[key])[0];
@@ -90,7 +90,7 @@ describe('amplify add auth...', () => {
     await initJSProjectWithProfile(projRoot, defaultsSettings);
     await addAuthWithRecaptchaTrigger(projRoot, {});
     await amplifyPushAuth(projRoot);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
 
     const createFunctionName = `${Object.keys(meta.auth)[0]}CreateAuthChallenge-integtest`;
     const defineFunctionName = `${Object.keys(meta.auth)[0]}DefineAuthChallenge-integtest`;

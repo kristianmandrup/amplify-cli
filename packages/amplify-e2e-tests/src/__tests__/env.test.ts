@@ -23,6 +23,7 @@ import {
   removeEnvironment,
   addEnvironmentHostedUI,
 } from '../environment/env';
+import { constructContext } from '@amplify/cli'
 
 async function validate(meta: any) {
   expect(meta.providers.awscloudformation).toBeDefined();
@@ -37,8 +38,10 @@ async function validate(meta: any) {
 
 describe('environment commands', () => {
   let projRoot: string;
+  let context
   beforeEach(async () => {
     projRoot = await createNewProjectDir('env-test');
+    context = constructContext(projRoot)
   });
 
   afterEach(async () => {
@@ -55,7 +58,7 @@ describe('environment commands', () => {
     await removeEnvironment(projRoot, { envName: 'envb' });
     await listEnvironment(projRoot, {});
 
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     await validate(meta);
   });
 
@@ -65,7 +68,7 @@ describe('environment commands', () => {
     await addAuthWithDefault(projRoot, {});
     await amplifyPull(projRoot, { override: true });
 
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     await validate(meta);
   });
 });
@@ -93,8 +96,8 @@ describe.skip('cross project environment commands', () => {
       projRoot2 = await createNewProjectDir('import-env-test2');
       await initJSProjectWithProfile(projRoot2, {});
       await importEnvironment(projRoot2, { providerConfig, envName: 'env' });
-      await validate(getProjectMeta(projRoot));
-      await validate(getProjectMeta(projRoot2));
+      await validate(getProjectMeta(context, projRoot));
+      await validate(getProjectMeta(context, projRoot2));
     } catch (e) {
       console.error(e);
     } finally {
@@ -122,13 +125,13 @@ describe('environment commands with Cognito Triggers', () => {
     await addEnvironment(projRoot, { envName: 'envb' });
     await listEnvironment(projRoot, { numEnv: 2 });
     await checkoutEnvironment(projRoot, { envName: 'enva' });
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     await validate(meta);
   });
 
   it('init a project, pull environment', async () => {
     await pullEnvironment(projRoot);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     await validate(meta);
   });
 });
@@ -151,12 +154,12 @@ describe('environment commands with recaptcha trigger', () => {
     await addEnvironment(projRoot, { envName: 'envb' });
     await listEnvironment(projRoot, { numEnv: 2 });
     await checkoutEnvironment(projRoot, { envName: 'enva' });
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     await validate(meta);
   });
   it('init a project, pull environment', async () => {
     await pullEnvironment(projRoot);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     await validate(meta);
   });
 });
@@ -178,13 +181,13 @@ describe('environment commands with HostedUI params', () => {
   it('init a project, add and checkout environment', async () => {
     await addEnvironmentHostedUI(projRoot, { envName: 'envb' });
     await listEnvironment(projRoot, { numEnv: 2 });
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     await validate(meta);
   });
 
   it('init a project, pull environment', async () => {
     await pullEnvironment(projRoot);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     await validate(meta);
   });
 });

@@ -39,7 +39,7 @@ describe('amplify add auth...', () => {
     await addAuthWithDefault(projRoot, {});
     await amplifyPushAuth(projRoot);
     await runAmplifyAuthConsole(projRoot);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const id = Object.keys(meta.auth).map(key => meta.auth[key])[0].output.UserPoolId;
     const userPool = await getUserPool(id, meta.providers.awscloudformation.Region);
     expect(userPool.UserPool).toBeDefined();
@@ -49,7 +49,7 @@ describe('amplify add auth...', () => {
     await initJSProjectWithProfile(projRoot, { ...defaultsSettings, envName: 'longenviro' });
     await addAuthWithDefault(projRoot, {});
     await amplifyPushAuth(projRoot);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const id = Object.keys(meta.auth).map(key => meta.auth[key])[0].output.UserPoolId;
     const userPool = await getUserPool(id, meta.providers.awscloudformation.Region);
     expect(userPool.UserPool).toBeDefined();
@@ -68,7 +68,7 @@ describe('amplify add auth...', () => {
     await initFlutterProjectWithProfile(projRoot, defaultsSettings);
     await addAuthWithDefault(projRoot, {});
     await amplifyPushAuth(projRoot);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const id = Object.keys(meta.auth).map(key => meta.auth[key])[0].output.UserPoolId;
     const userPool = await getUserPool(id, meta.providers.awscloudformation.Region);
     expect(userPool.UserPool).toBeDefined();

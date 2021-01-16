@@ -31,7 +31,7 @@ describe('nodejs', () => {
       await addFunction(projRoot, { functionTemplate: 'Hello World', name: functionName }, 'nodejs');
       await functionBuild(projRoot, {});
       await amplifyPushAuth(projRoot);
-      const meta = getProjectMeta(projRoot);
+      const meta = getProjectMeta(context, projRoot);
       const { Arn: functionArn, Name, Region: region } = Object.keys(meta.function).map(key => meta.function[key])[0].output;
       expect(functionArn).toBeDefined();
       expect(functionName).toBeDefined();
@@ -50,7 +50,7 @@ describe('nodejs', () => {
       await addFunction(projRoot, { functionTemplate: 'Hello World' }, 'nodejs');
       await functionBuild(projRoot, {});
       await amplifyPushAuth(projRoot);
-      const meta = getProjectMeta(projRoot);
+      const meta = getProjectMeta(context, projRoot);
       const { Arn: functionArn, Name: functionName, Region: region } = Object.keys(meta.function).map(key => meta.function[key])[0].output;
       expect(functionArn).toBeDefined();
       expect(functionName).toBeDefined();
@@ -66,7 +66,7 @@ describe('nodejs', () => {
 
       await functionBuild(projRoot, {});
       await amplifyPush(projRoot);
-      const meta = getProjectMeta(projRoot);
+      const meta = getProjectMeta(context, projRoot);
       const { Arn: functionArn, Name: functionName, Region: region } = Object.keys(meta.function).map(key => meta.function[key])[0].output;
       expect(functionArn).toBeDefined();
       expect(functionName).toBeDefined();
@@ -119,7 +119,7 @@ describe('nodejs', () => {
 
       await functionBuild(projRoot, {});
       await amplifyPushAuth(projRoot);
-      const meta = getProjectMeta(projRoot);
+      const meta = getProjectMeta(context, projRoot);
       const { Arn: functionArn, Name: functionName, Region: region } = Object.keys(meta.function).map(key => meta.function[key])[0].output;
       expect(functionArn).toBeDefined();
       expect(functionName).toBeDefined();
@@ -219,7 +219,7 @@ describe('nodejs', () => {
       );
 
       await amplifyPushAuth(projRoot);
-      const meta = getProjectMeta(projRoot);
+      const meta = getProjectMeta(context, projRoot);
       const { Name: table1Name, Arn: table1Arn, Region: table1Region, StreamArn: table1StreamArn } = Object.keys(meta.storage).map(
         key => meta.storage[key],
       )[0].output;

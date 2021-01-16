@@ -57,7 +57,7 @@ describe('amplify add auth...', () => {
     await initJSProjectWithProfile(projRoot, defaultsSettings);
     await addAuthUserPoolOnly(projRoot, {});
     await amplifyPushAuth(projRoot);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const id = Object.keys(meta.auth).map(key => meta.auth[key])[1].output.UserPoolId;
     const userPool = await getUserPool(id, meta.providers.awscloudformation.Region);
 
@@ -68,7 +68,7 @@ describe('amplify add auth...', () => {
     await initJSProjectWithProfile(projRoot, defaultsSettings);
     await addAuthWithMaxOptions(projRoot, {});
     await amplifyPushAuth(projRoot);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
 
     const createFunctionName = `${Object.keys(meta.auth)[1]}CreateAuthChallenge-integtest`;
     const defineFunctionName = `${Object.keys(meta.auth)[1]}DefineAuthChallenge-integtest`;

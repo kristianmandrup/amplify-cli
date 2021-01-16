@@ -28,7 +28,7 @@ describe('amplify add/update storage(S3)', () => {
   });
 
   async function validate(projRoot) {
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const { BucketName: bucketName, Region: region } = Object.keys(meta.storage).map(key => meta.storage[key])[0].output;
 
     expect(bucketName).toBeDefined();
@@ -127,7 +127,7 @@ describe('amplify add/update storage(DDB)', () => {
     await updateDDBWithTrigger(projRoot, {});
     await amplifyPushAuth(projRoot);
 
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const { Name: table1Name, Arn: table1Arn, Region: table1Region, StreamArn: table1StreamArn } = Object.keys(meta.storage).map(
       key => meta.storage[key],
     )[0].output;

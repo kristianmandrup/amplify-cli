@@ -57,7 +57,7 @@ describe('amplify add api (GraphQL)', () => {
 
     await amplifyPush(projRoot);
 
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const { output } = meta.api[name];
     const { GraphQLAPIIdOutput, GraphQLAPIEndpointOutput, GraphQLAPIKeyOutput } = output;
     const { graphqlApi } = await getAppSyncApi(GraphQLAPIIdOutput, meta.providers.awscloudformation.Region);
@@ -88,7 +88,7 @@ describe('amplify add api (GraphQL)', () => {
     await amplifyPush(projRoot);
 
     // verify
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const { output } = meta.api.myApiName;
     const { GraphQLAPIIdOutput, GraphQLAPIEndpointOutput, GraphQLAPIKeyOutput } = output;
     const { graphqlApi } = await getAppSyncApi(GraphQLAPIIdOutput, meta.providers.awscloudformation.Region);
@@ -132,7 +132,7 @@ describe('amplify add api (GraphQL)', () => {
     await amplifyPushUpdate(projRoot);
 
     // verify
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const { output } = meta.api.myApiName;
     const { GraphQLAPIIdOutput, GraphQLAPIEndpointOutput, GraphQLAPIKeyOutput } = output;
     const { graphqlApi } = await getAppSyncApi(GraphQLAPIIdOutput, meta.providers.awscloudformation.Region);
@@ -155,7 +155,7 @@ describe('amplify add api (GraphQL)', () => {
     await amplifyPush(projRoot);
 
     // verify
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const { output } = meta.api.myApiName;
     const { GraphQLAPIIdOutput, GraphQLAPIEndpointOutput, GraphQLAPIKeyOutput } = output;
     const { graphqlApi } = await getAppSyncApi(GraphQLAPIIdOutput, meta.providers.awscloudformation.Region);
@@ -170,7 +170,7 @@ describe('amplify add api (GraphQL)', () => {
     await removeHeadlessApi(projRoot, 'myApiName');
     await amplifyPushUpdate(projRoot);
 
-    const newMeta = getProjectMeta(projRoot);
+    const newMeta = getProjectMeta(context, projRoot);
     expect(_.isEmpty(newMeta.api)).toBe(true);
     try {
       await getAppSyncApi(GraphQLAPIIdOutput, meta.providers.awscloudformation.Region);

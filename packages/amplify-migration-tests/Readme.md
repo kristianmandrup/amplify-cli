@@ -44,7 +44,7 @@ describe('amplify your test', () => {
     await initJSProjectWithProfile(projRoot, { name: '<project-name>' });
     // add resources that you want to test
     await amplifyPush(projRoot); // Push it to the cloud
-    const { output } = getProjectMeta(projRoot).api.simplemodel;
+    const { output } = getProjectMeta(context, projRoot).api.simplemodel;
 
     // TODO - assertion to make sure the resources are pushed. Use matcher
   });

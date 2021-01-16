@@ -43,7 +43,7 @@ describe('amplify function migration', () => {
     );
 
     await amplifyPushAuth(projRoot);
-    let meta = getProjectMeta(projRoot);
+    let meta = getProjectMeta(context, projRoot);
     const { Arn: functionArn, Name: functionName, Region: region } = Object.keys(meta.function).map(key => meta.function[key])[0].output;
     expect(functionArn).toBeDefined();
     expect(functionName).toBeDefined();
@@ -67,7 +67,7 @@ describe('amplify function migration', () => {
     );
     await amplifyPush(projRoot, true);
 
-    meta = getProjectMeta(projRoot);
+    meta = getProjectMeta(context, projRoot);
     const { GraphQLAPIIdOutput: appsyncId } = Object.keys(meta.api).map(key => meta.api[key])[0].output;
     const result = await invokeFunction(functionName, JSON.stringify({ tableName: `Todo-${appsyncId}-integtest` }), region);
     expect(result.StatusCode).toBe(200);
@@ -111,7 +111,7 @@ describe('amplify function migration', () => {
       'nodejs',
     );
     await amplifyPushAuth(projRoot, true);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     await validateLayerMetadata(projRoot, layerName, meta, 'integtest');
   });
 
@@ -128,7 +128,7 @@ describe('amplify function migration', () => {
     await amplifyPushAuth(projRoot);
     await updateLayer(projRoot, { ...layerSettings, runtimes: ['python'], numLayers: 1, permissions: [] }, true);
     await amplifyPushAuth(projRoot, true);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     await validateLayerMetadata(projRoot, layerName, meta, 'integtest');
   });
 });

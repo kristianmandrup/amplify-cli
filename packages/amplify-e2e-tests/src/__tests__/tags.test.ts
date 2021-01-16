@@ -30,7 +30,7 @@ describe('generated tags test', () => {
     await amplifyPushWithoutCodegen(projRoot);
 
     // This block of code gets the necessary info to compare the values of both the local tags from the JSON file and tags on the stack
-    const amplifyMeta = getProjectMeta(projRoot);
+    const amplifyMeta = getProjectMeta(context, projRoot);
     const meta = amplifyMeta.providers.awscloudformation;
     const rootStackInfo = await describeCloudFormationStack(meta.StackName, meta.Region);
     const localTags = getProjectTags(projRoot);

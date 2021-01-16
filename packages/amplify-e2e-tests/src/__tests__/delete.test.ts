@@ -52,7 +52,7 @@ describe('amplify delete', () => {
     await initProjectForPinpoint(projRoot);
     const pinpointResourceName = await addPinpointAnalytics(projRoot);
     await pushToCloud(projRoot);
-    const amplifyMeta = getProjectMeta(projRoot);
+    const amplifyMeta = getProjectMeta(context, projRoot);
     const pintpointAppId = amplifyMeta.analytics[pinpointResourceName].output.Id;
     let pinpointAppExists = await pinpointAppExist(pintpointAppId);
     expect(pinpointAppExists).toBeTruthy();
@@ -65,7 +65,7 @@ describe('amplify delete', () => {
   it('should remove enviroment', async () => {
     await initJSProjectWithProfile(projRoot, { envName: 'testdev' });
     await addEnvironment(projRoot, { envName: 'testprod' });
-    const amplifyMeta = getProjectMeta(projRoot);
+    const amplifyMeta = getProjectMeta(context, projRoot);
     const meta = amplifyMeta.providers.awscloudformation;
     const deploymentBucketName1 = meta.DeploymentBucketName;
     await expect(await bucketExists(deploymentBucketName1)).toBe(true);
@@ -88,7 +88,7 @@ describe('amplify delete', () => {
   });
   it('should try deleting unavailable bucket but not fail', async () => {
     await initJSProjectWithProfile(projRoot, {});
-    const amplifyMeta = getProjectMeta(projRoot);
+    const amplifyMeta = getProjectMeta(context, projRoot);
     const meta = amplifyMeta.providers.awscloudformation;
     const bucketName = meta.DeploymentBucketName;
     expect(await bucketExists(bucketName)).toBeTruthy();
@@ -98,7 +98,7 @@ describe('amplify delete', () => {
 });
 
 async function testDeletion(projRoot: string, settings: { ios?: Boolean; android?: Boolean }) {
-  const amplifyMeta = getProjectMeta(projRoot);
+  const amplifyMeta = getProjectMeta(context, projRoot);
   const meta = amplifyMeta.providers.awscloudformation;
   const deploymentBucketName1 = meta.DeploymentBucketName;
   expect(meta.Region).toBeDefined();
@@ -106,7 +106,7 @@ async function testDeletion(projRoot: string, settings: { ios?: Boolean; android
   await addEnvironment(projRoot, { envName: 'test' });
   await addApiWithoutSchema(projRoot);
   await addCodegen(projRoot, settings);
-  const deploymentBucketName2 = getProjectMeta(projRoot).providers.awscloudformation.DeploymentBucketName;
+  const deploymentBucketName2 = getProjectMeta(context, projRoot).providers.awscloudformation.DeploymentBucketName;
   expect(await bucketExists(deploymentBucketName1)).toBe(true);
   expect(await bucketExists(deploymentBucketName2)).toBe(true);
   if (meta.AmplifyAppId) expect(await appExists(meta.AmplifyAppId, meta.Region)).toBe(true);

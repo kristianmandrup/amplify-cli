@@ -39,7 +39,7 @@ describe('api migration update test', () => {
     // update api and push with the CLI to be released (the codebase)
     updateApiSchema(projRoot, projectName, nextSchema);
     await amplifyPushUpdate(projRoot, undefined, true);
-    const { output } = getProjectMeta(projRoot).api[projectName];
+    const { output } = getProjectMeta(context, projRoot).api[projectName];
     const { GraphQLAPIIdOutput, GraphQLAPIEndpointOutput, GraphQLAPIKeyOutput } = output;
     expect(GraphQLAPIIdOutput).toBeDefined();
     expect(GraphQLAPIEndpointOutput).toBeDefined();
@@ -54,7 +54,7 @@ describe('api migration update test', () => {
     await updateApiWithMultiAuth(projRoot, { testingWithLatestCodebase: true });
     await amplifyPush(projRoot, true);
 
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const { output } = meta.api.simplemodelmultiauth;
     const { GraphQLAPIIdOutput, GraphQLAPIEndpointOutput, GraphQLAPIKeyOutput } = output;
     const { graphqlApi } = await getAppSyncApi(GraphQLAPIIdOutput, meta.providers.awscloudformation.Region);
@@ -116,7 +116,7 @@ describe('api migration update test', () => {
     expect(transformConfig.ResolverConfig.project.ConflictHandler).toEqual('OPTIMISTIC_CONCURRENCY');
 
     await amplifyPush(projRoot, true);
-    const meta = getProjectMeta(projRoot);
+    const meta = getProjectMeta(context, projRoot);
     const { output } = meta.api[name];
     const { GraphQLAPIIdOutput, GraphQLAPIEndpointOutput, GraphQLAPIKeyOutput } = output;
     const { graphqlApi } = await getAppSyncApi(GraphQLAPIIdOutput, meta.providers.awscloudformation.Region);
