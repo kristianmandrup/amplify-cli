@@ -10,17 +10,17 @@ import {
 } from 'amplify-e2e-core';
 import { createNewProjectDir, deleteProjectDir, getProjectMeta, getTransformConfig, getAppSyncApi } from 'amplify-e2e-core';
 import { TRANSFORM_CURRENT_VERSION } from 'graphql-transformer-core';
-import { constructContext } from '@amplify/cli'
+import { constructContext } from '@aws-amplify/cli';
 
 describe('api migration update test', () => {
-  let projRoot, context
+  let projRoot, context;
   beforeEach(async () => {
     projRoot = await createNewProjectDir('graphql-api');
-    context = constructContext(projRoot)
+    context = constructContext(projRoot);
   });
 
   afterEach(async () => {
-    const { amplifyPathDir } = context.pathManager
+    const { amplifyPathDir } = context.pathManager;
     const metaFilePath = join(projRoot, amplifyPathDir('#current-cloud-backend', 'amplify-meta.json'));
     if (existsSync(metaFilePath)) {
       await deleteProject(projRoot);

@@ -23,6 +23,8 @@ import { constants } from './domain/constants';
 import { checkProjectConfigVersion } from './project-config-version-check';
 import { notify } from './version-notifier';
 
+export { constructContext };
+
 // Adjust defaultMaxListeners to make sure Inquirer will not fail under Windows because of the multiple subscriptions
 // https://github.com/SBoudrias/Inquirer.js/issues/887
 import { EventEmitter } from 'events';

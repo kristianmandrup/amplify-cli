@@ -21,18 +21,18 @@ import { TRANSFORM_CURRENT_VERSION, TRANSFORM_BASE_VERSION, writeTransformerConf
 import { AddApiRequest, UpdateApiRequest } from 'amplify-headless-interface';
 import { readFileSync } from 'fs-extra';
 import _ from 'lodash';
-import { constructContext } from '@amplify/cli'
+import { constructContext } from '@aws-amplify/cli';
 
 describe('amplify add api (GraphQL)', () => {
   let projRoot: string;
-  let context
+  let context;
   beforeEach(async () => {
     projRoot = await createNewProjectDir('graphql-api');
-    context = constructContext(projRoot)
+    context = constructContext(projRoot);
   });
 
   afterEach(async () => {
-    const { amplifyPathDir } = context.pathManager
+    const { amplifyPathDir } = context.pathManager;
     const metaFilePath = path.join(projRoot, amplifyPathDir('#current-cloud-backend', 'amplify-meta.json'));
     if (existsSync(metaFilePath)) {
       await deleteProject(context, projRoot);
@@ -51,7 +51,7 @@ describe('amplify add api (GraphQL)', () => {
     expect(transformConfig.Version).toEqual(TRANSFORM_CURRENT_VERSION);
 
     transformConfig.Version = TRANSFORM_BASE_VERSION;
-    const { backendPathDirFor } = context.pathManager
+    const { backendPathDirFor } = context.pathManager;
     const apiRoot = path.join(projRoot, backendPathDirFor('api', name));
     writeTransformerConfiguration(apiRoot, transformConfig);
 

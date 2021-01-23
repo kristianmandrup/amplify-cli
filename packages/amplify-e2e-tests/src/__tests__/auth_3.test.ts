@@ -15,7 +15,7 @@ import {
   getLambdaFunction,
 } from 'amplify-e2e-core';
 import _ from 'lodash';
-import { constructContext } from '@amplify/cli'
+import { constructContext } from '@aws-amplify/cli';
 
 const defaultsSettings = {
   name: 'authTest',
@@ -23,10 +23,10 @@ const defaultsSettings = {
 
 describe('amplify add auth...', () => {
   let projRoot: string;
-  let context
+  let context;
   beforeEach(async () => {
     projRoot = await createNewProjectDir('auth');
-    context = constructContext(projRoot)
+    context = constructContext(projRoot);
   });
 
   afterEach(async () => {

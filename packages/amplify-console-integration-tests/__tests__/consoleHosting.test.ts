@@ -12,7 +12,7 @@ import {
   deleteProject,
   addEnvironment,
 } from '../src/consoleHosting/consoleHosting';
-import { constructContext } from '@amplify/cli'
+import { constructContext } from '@aws-amplify/cli';
 import { loadTypeFromTeamProviderInfo, createTestProject, cleanHostingLocally } from '../src/consoleHosting/utils';
 import { deleteProjectDir, getProfileName, npmInstall } from '../src/util';
 import * as fs from 'fs-extra';
@@ -32,10 +32,10 @@ describe('amplify console add hosting', () => {
     },
   };
 
-  beforeEach(async () => {    
+  beforeEach(async () => {
     projRoot = await createTestProject();
-    context = constructContext(projRoot)
-    getBackendDirPath = context.pathManager.getBackendDirPath
+    context = constructContext(projRoot);
+    getBackendDirPath = context.pathManager.getBackendDirPath;
     await initJSProjectWithProfile(projRoot, providersParam);
   });
 
@@ -46,10 +46,10 @@ describe('amplify console add hosting', () => {
 
   // Manual tests
   it('add / publish / configure/ serve /remove hosting for manual deployment should succeed', async () => {
-    try {      
-      await addManualHosting(projRoot);      
+    try {
+      await addManualHosting(projRoot);
       expect(fs.existsSync(path.join(projRoot, getBackendDirPath('hosting', 'amplifyhosting')))).toBe(true);
-      const type = loadTypeFromTeamProviderInfo(projRoot, ORIGINAL_ENV);
+      const type = loadTypeFromTeamProviderInfo(context, projRoot, ORIGINAL_ENV);
       expect(type).toBe(TYPE_MANUAL);
       npmInstall(projRoot);
       await amplifyPublish(projRoot);
@@ -64,7 +64,7 @@ describe('amplify console add hosting', () => {
     await addManualHosting(projRoot);
     await addEnvironment(projRoot, { providersParam, envName: NEW_ENV });
     expect(fs.existsSync(path.join(projRoot, getBackendDirPath('hosting', 'amplifyhosting')))).toBe(true);
-    const type = loadTypeFromTeamProviderInfo(projRoot, NEW_ENV);
+    const type = loadTypeFromTeamProviderInfo(context, projRoot, NEW_ENV);
     expect(type).toBe(TYPE_MANUAL);
     npmInstall(projRoot);
     await amplifyPublish(projRoot);

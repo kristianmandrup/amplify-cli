@@ -1,4 +1,9 @@
 import { nspawn as spawn, retry, getCLIPath, describeCloudFormationStack, getProjectMeta } from '..';
+import * as fs from 'fs-extra';
+
+export function deleteProjectDir(projectDirpath: string) {
+  return fs.removeSync(projectDirpath);
+}
 
 export const deleteProject = async (context, cwd: string, profileConfig?: any) => {
   const { StackName: stackName, Region: region } = getProjectMeta(context, cwd).providers.awscloudformation;

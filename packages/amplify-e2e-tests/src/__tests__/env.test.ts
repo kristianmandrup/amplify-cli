@@ -23,7 +23,7 @@ import {
   removeEnvironment,
   addEnvironmentHostedUI,
 } from '../environment/env';
-import { constructContext } from '@amplify/cli'
+import { constructContext } from '@aws-amplify/cli';
 
 async function validate(meta: any) {
   expect(meta.providers.awscloudformation).toBeDefined();
@@ -38,10 +38,10 @@ async function validate(meta: any) {
 
 describe('environment commands', () => {
   let projRoot: string;
-  let context
+  let context;
   beforeEach(async () => {
     projRoot = await createNewProjectDir('env-test');
-    context = constructContext(projRoot)
+    context = constructContext(projRoot);
   });
 
   afterEach(async () => {

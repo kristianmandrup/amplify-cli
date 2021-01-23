@@ -7,7 +7,7 @@ import { readJsonFile } from 'amplify-e2e-core';
 import { HOSTING, RESOURCE, TYPE, TYPE_UNKNOWN, CATEGORIES, APPID, PROVIDER } from './constants';
 
 export function loadTypeFromTeamProviderInfo(context, cwd: string, currEnv: string) {
-  const { amplifyDirPathFor } = context.pathManager
+  const { amplifyDirPathFor } = context.pathManager;
   const teamProviderPath = path.join(cwd, amplifyDirPathFor('team-provider-info.json'));
   const content = readJsonFile(teamProviderPath);
   if (
@@ -25,7 +25,7 @@ export function loadTypeFromTeamProviderInfo(context, cwd: string, currEnv: stri
 }
 
 export function cleanHostingLocally(context, cwd: string, currEnv: string) {
-  const { getAmplifyDirPathFor, getBackendDirPathFor } = context.pathManager  
+  const { getAmplifyDirPathFor, getBackendDirPathFor } = context.pathManager;
   const hostingDirPath = path.join(cwd, getBackendDirPathFor('hosting'));
   fs.removeSync(hostingDirPath);
   const currentHostingDirPath = path.join(cwd, getAmplifyDirPathFor('#current-cloud-backend', 'hosting'));

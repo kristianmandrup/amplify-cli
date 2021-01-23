@@ -10,17 +10,17 @@ import {
   deleteProjectDir,
   getProjectMeta,
 } from 'amplify-e2e-core';
-import { constructContext } from '@amplify/cli'
+import { constructContext } from '@aws-amplify/cli';
 
 describe('amplify auth migration', () => {
-  let projRoot, context
+  let projRoot, context;
   beforeEach(async () => {
     projRoot = await createNewProjectDir('auth migration');
-    context = constructContext(projRoot)
+    context = constructContext(projRoot);
   });
 
   afterEach(async () => {
-    const { amplifyPathDir } = context.pathManager
+    const { amplifyPathDir } = context.pathManager;
     const metaFilePath = join(projRoot, amplifyPathDir('#current-cloud-backend', 'amplify-meta.json'));
     if (fs.existsSync(metaFilePath)) {
       await deleteProject(projRoot);

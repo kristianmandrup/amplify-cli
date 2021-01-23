@@ -1,9 +1,10 @@
 import * as path from 'path';
 import { $TSAny, $TSContext, PathManager } from 'amplify-cli-core';
 import { Context } from './context';
-import { getAmplifyRc } from './amplify-rc'
+import { getAmplifyRc } from './amplify-rc';
 
 export class AmplifyToolkit {
+  private _options: any;
   private _buildResources: any;
   private _confirmPrompt: any;
   private _constants: any;
@@ -93,7 +94,7 @@ export class AmplifyToolkit {
   private _amplifyHelpersDirPath: string = path.normalize(path.join(__dirname, '../extensions/amplify-helpers'));
 
   set amplifyHelpersDirPath(dirPath) {
-    this._amplifyHelpersDirPath = dirPath
+    this._amplifyHelpersDirPath = dirPath;
   }
 
   get buildResources(): any {
@@ -224,7 +225,7 @@ export class AmplifyToolkit {
   }
 
   get paths(): any {
-    this._paths = this._paths || new PathManager()
+    this._paths = this._paths || new PathManager();
     return this._paths;
   }
 
@@ -234,8 +235,7 @@ export class AmplifyToolkit {
   }
 
   set pathManager(pathManager) {
-    this._pathManager = pathManager
-    return this
+    this._pathManager = pathManager;
   }
 
   get pressEnterToContinue(): any {
@@ -483,16 +483,16 @@ export class AmplifyToolkit {
     return this._invokePluginMethod;
   }
 
-  constructor(options) {
-    const rcOptions = getAmplifyRc(options)
-    options = rcOptions
-    this._options = options
+  constructor(options: any = {}) {
+    const rcOptions = getAmplifyRc(options);
+    options = rcOptions;
+    this._options = options;
 
     if (options.amplifyHelpersDirPath) {
-      this.amplifyHelpersDirPath = options.amplifyHelpersDirPath
+      this.amplifyHelpersDirPath = options.amplifyHelpersDirPath;
     }
     if (options.paths) {
-      this.paths.extendPathConstants(options.paths)
+      this.paths.extendPathConstants(options.paths);
     }
 
     this._cleanUpTasks = new Array();
