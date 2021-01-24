@@ -1,5 +1,5 @@
 export const run = async context => {
-  await context.amplify.showResourceTable();
+  await context.amplify.showResourceTable(undefined, undefined, undefined, context);
   await context.amplify.showHelpfulProviderLinks(context);
   await showAmplifyConsoleHostingStatus(context);
 };
