@@ -45,7 +45,7 @@ export async function pushResources(context, category, resourceName, filteredRes
     }
   }
 
-  const hasChanges = await showResourceTable(category, resourceName, filteredResources);
+  const hasChanges = await showResourceTable(category, resourceName, filteredResources, context);
 
   // no changes detected
   if (!hasChanges && !context.exeInfo.forcePush) {

@@ -224,6 +224,13 @@ export class AmplifyToolkit {
     return this._onCategoryOutputsChange;
   }
 
+  filterResource(resource) {
+    const nameMatch = resource.resourceName.startsWith(this.contextDomain + "-")
+    const resourceDomain = (resource.Properties || {}).DomainName
+    const matchesDomainNameProp = this.contextDomain == resourceDomain
+    return nameMatch || matchesDomainNameProp
+  }
+
   get paths(): any {
     return this._paths;
   }
@@ -484,6 +491,10 @@ export class AmplifyToolkit {
     this._invokePluginMethod =
       this._invokePluginMethod || require(path.join(this._amplifyHelpersDirPath, 'invoke-plugin-method')).invokePluginMethod;
     return this._invokePluginMethod;
+  }
+
+  get contextDomain() {
+    return this._options.domain;
   }
 
   constructor(options: any = {}) {

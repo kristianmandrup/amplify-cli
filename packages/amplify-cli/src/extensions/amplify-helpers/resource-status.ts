@@ -63,7 +63,7 @@ function filterResources(resources, filteredResources) {
   return resources;
 }
 
-function getAllResources(amplifyMeta, category, resourceName, filteredResources) {
+function getAllResources(amplifyMeta, category, resourceName, filteredResources, context) {
   let resources: any[] = [];
 
   Object.keys(amplifyMeta).forEach(categoryName => {
@@ -90,7 +90,7 @@ function getAllResources(amplifyMeta, category, resourceName, filteredResources)
   return resources;
 }
 
-function getResourcesToBeCreated(amplifyMeta, currentAmplifyMeta, category, resourceName, filteredResources) {
+function getResourcesToBeCreated(amplifyMeta, currentAmplifyMeta, category, resourceName, filteredResources, context) {
   let resources: any[] = [];
 
   Object.keys(amplifyMeta).forEach(categoryName => {
@@ -144,7 +144,7 @@ function getResourcesToBeCreated(amplifyMeta, currentAmplifyMeta, category, reso
   return _.uniqWith(resources, _.isEqual);
 }
 
-function getResourcesToBeDeleted(amplifyMeta, currentAmplifyMeta, category, resourceName, filteredResources) {
+function getResourcesToBeDeleted(amplifyMeta, currentAmplifyMeta, category, resourceName, filteredResources, context) {
   let resources: any[] = [];
 
   Object.keys(currentAmplifyMeta).forEach(categoryName => {
@@ -174,7 +174,7 @@ function getResourcesToBeDeleted(amplifyMeta, currentAmplifyMeta, category, reso
   return resources;
 }
 
-async function getResourcesToBeUpdated(amplifyMeta, currentAmplifyMeta, category, resourceName, filteredResources) {
+async function getResourcesToBeUpdated(amplifyMeta, currentAmplifyMeta, category, resourceName, filteredResources, context) {
   let resources: any[] = [];
 
   await asyncForEach(Object.keys(amplifyMeta), async categoryName => {
@@ -220,7 +220,7 @@ async function getResourcesToBeUpdated(amplifyMeta, currentAmplifyMeta, category
   return resources;
 }
 
-function getResourcesToBeSynced(amplifyMeta, currentAmplifyMeta, category, resourceName, filteredResources) {
+function getResourcesToBeSynced(amplifyMeta, currentAmplifyMeta, category, resourceName, filteredResources, context) {
   let resources: any[] = [];
 
   // For imported resource we are handling add/remove/delete in one place, because
@@ -311,7 +311,7 @@ async function asyncForEach(array, callback) {
   }
 }
 
-export async function getResourceStatus(category?, resourceName?, providerName?, filteredResources?) {
+export async function getResourceStatus(category?, resourceName?, providerName?, filteredResources?, context?) {
   const amplifyProjectInitStatus = getCloudInitStatus();
   let amplifyMeta: $TSAny;
   let currentAmplifyMeta: $TSMeta = {};
@@ -332,21 +332,27 @@ export async function getResourceStatus(category?, resourceName?, providerName?,
     throw error;
   }
 
-  let resourcesToBeCreated: any = getResourcesToBeCreated(amplifyMeta, currentAmplifyMeta, category, resourceName, filteredResources);
-  let resourcesToBeUpdated: any = await getResourcesToBeUpdated(amplifyMeta, currentAmplifyMeta, category, resourceName, filteredResources);
-  let resourcesToBeSynced: any = getResourcesToBeSynced(amplifyMeta, currentAmplifyMeta, category, resourceName, filteredResources);
-  let resourcesToBeDeleted: any = getResourcesToBeDeleted(amplifyMeta, currentAmplifyMeta, category, resourceName, filteredResources);
+  let resourcesToBeCreated: any = getResourcesToBeCreated(amplifyMeta, currentAmplifyMeta, category, resourceName, filteredResources, context);
+  let resourcesToBeUpdated: any = await getResourcesToBeUpdated(amplifyMeta, currentAmplifyMeta, category, resourceName, filteredResources, context);
+  let resourcesToBeSynced: any = getResourcesToBeSynced(amplifyMeta, currentAmplifyMeta, category, resourceName, filteredResources, context);
+  let resourcesToBeDeleted: any = getResourcesToBeDeleted(amplifyMeta, currentAmplifyMeta, category, resourceName, filteredResources, context);
 
-  let allResources: any = getAllResources(amplifyMeta, category, resourceName, filteredResources);
+  let allResources: any = getAllResources(amplifyMeta, category, resourceName, filteredResources, context);
 
   resourcesToBeCreated = resourcesToBeCreated.filter(resource => resource.category !== 'provider');
 
+  const filterResourceContext = resource => context && context.amplify.filterResource(resource)
+  const filterResourceProviderPlugin = resource => resource.providerPlugin === providerName
+  const filterResource = resource => filterResourceProviderPlugin(resource) && filterResourceContext(resource)
+
+  resourcesToBeCreated = resourcesToBeCreated.filter(filterResourceContext);
+
   if (providerName) {
-    resourcesToBeCreated = resourcesToBeCreated.filter(resource => resource.providerPlugin === providerName);
-    resourcesToBeUpdated = resourcesToBeUpdated.filter(resource => resource.providerPlugin === providerName);
-    resourcesToBeSynced = resourcesToBeSynced.filter(resource => resource.providerPlugin === providerName);
-    resourcesToBeDeleted = resourcesToBeDeleted.filter(resource => resource.providerPlugin === providerName);
-    allResources = allResources.filter(resource => resource.providerPlugin === providerName);
+    resourcesToBeCreated = resourcesToBeCreated.filter(filterResource);
+    resourcesToBeUpdated = resourcesToBeUpdated.filter(filterResource);
+    resourcesToBeSynced = resourcesToBeSynced.filter(filterResource);
+    resourcesToBeDeleted = resourcesToBeDeleted.filter(filterResource);
+    allResources = allResources.filter(filterResource);
   }
   let tagsUpdated = compareTags(stateManager.getProjectTags(), stateManager.getCurrentProjectTags());
 
@@ -380,7 +386,7 @@ function compareTags(tags: Tag[], currenTags: Tag[]): boolean {
   return false;
 }
 
-export async function showResourceTable(category, resourceName, filteredResources) {
+export async function showResourceTable(category, resourceName, filteredResources, context?) {
   const amplifyProjectInitStatus = getCloudInitStatus();
 
   if (amplifyProjectInitStatus === CLOUD_INITIALIZED) {
@@ -398,7 +404,7 @@ export async function showResourceTable(category, resourceName, filteredResource
     resourcesToBeSynced,
     allResources,
     tagsUpdated,
-  } = await getResourceStatus(category, resourceName, undefined, filteredResources);
+  } = await getResourceStatus(category, resourceName, undefined, filteredResources, context);
 
   let noChangeResources = _.differenceWith(
     allResources,
