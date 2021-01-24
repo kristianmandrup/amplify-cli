@@ -89,7 +89,7 @@ export async function initializeEnv(context: $TSContext, currentAmplifyMeta?: $T
     if (context.exeInfo.forcePush) {
       for (let provider of context.exeInfo.projectConfig.providers) {
         const providerModule = require(providerPlugins[provider]);
-        const resourceDefiniton = await context.amplify.getResourceStatus(undefined, undefined, provider);
+        const resourceDefiniton = await context.amplify.getResourceStatus(undefined, undefined, provider, context);
         providerPushTasks.push(() => providerModule.pushResources(context, resourceDefiniton));
       }
 

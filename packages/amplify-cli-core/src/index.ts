@@ -139,7 +139,7 @@ interface AmplifyToolkit {
   getProjectConfig: () => $TSAny;
   getProjectDetails: () => $TSAny;
   getProjectMeta: () => $TSMeta;
-  getResourceStatus: (category?: $TSAny, resourceName?: $TSAny, providerName?: $TSAny, filteredResources?: $TSAny) => $TSAny;
+  getResourceStatus: (category?: $TSAny, resourceName?: $TSAny, providerName?: $TSAny, filteredResources?: $TSAny, context?: $TSAny) => $TSAny;
   getResourceOutputs: () => $TSAny;
   getWhen: () => $TSAny;
   inputValidation: (input: $TSAny) => $TSAny;

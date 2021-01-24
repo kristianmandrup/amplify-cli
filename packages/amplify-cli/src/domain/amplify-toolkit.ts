@@ -225,6 +225,7 @@ export class AmplifyToolkit {
   }
 
   filterResource(resource) {
+    if (!this.contextDomain) return true
     const nameMatch = resource.resourceName.startsWith(this.contextDomain + "-")
     const resourceDomain = (resource.Properties || {}).DomainName
     const matchesDomainNameProp = this.contextDomain == resourceDomain

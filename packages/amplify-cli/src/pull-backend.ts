@@ -8,7 +8,7 @@ export async function pullBackend(context, inputParams) {
   context.exeInfo.inputParams = inputParams;
   context.print.info('');
   context.print.info('Pre-pull status:');
-  const hasChanges = await context.amplify.showResourceTable();
+  const hasChanges = await context.amplify.showResourceTable(undefined, undefined, undefined, undefined, context);
   context.print.info('');
 
   context.exeInfo.forcePush = false;
@@ -35,7 +35,7 @@ export async function pullBackend(context, inputParams) {
   ensureBackendConfigFile(context);
   await postPullCodegen(context);
   context.print.info('Post-pull status:');
-  await context.amplify.showResourceTable();
+  await context.amplify.showResourceTable(undefined, undefined, undefined, context);
   context.print.info('');
 }
 
