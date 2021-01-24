@@ -36,6 +36,21 @@ import { logInput } from './conditional-local-logging-init';
 
 EventEmitter.defaultMaxListeners = 1000;
 
+function getContexts(pluginPlatform, input, projectPath) {
+  try {
+    const contextsFilePath = path.join(projectPath, 'amplify-contexts.json')
+    const content = fs.readFileSync(projectPath, 'utf-8');
+    if (content) {
+      const json = JSON.parse(content);
+      const contextPaths = json.contextPaths || [];
+      input.options.projectPath = projectPath
+      return contextPaths.map(contextPath => constructContext(pluginPlatform, input))
+    }
+  } catch {
+    return null;
+  }
+}
+
 // entry from commandline
 export async function run() {
   let errorHandler = (e: Error) => {};
@@ -75,6 +90,10 @@ export async function run() {
 
     rewireDeprecatedCommands(input);
     logInput(input);
+
+    const prjPath = input.options.projectPath;
+    const projectPath = prjPath || (pathManager.findProjectRoot() ?? process.cwd());
+
     const context = constructContext(pluginPlatform, input);
 
     // Initialize feature flags
@@ -82,9 +101,8 @@ export async function run() {
       getEnvInfo: context.amplify.getEnvInfo,
     });
 
-    const prjPath = input.options.projectPath;
-    const projectPath = prjPath || (pathManager.findProjectRoot() ?? process.cwd());
     // process.chdir(projectPath);
+    const contexts = getContexts(pluginPlatform, input, projectPath) || [context]
 
     const useNewDefaults = !stateManager.projectConfigExists(projectPath);
 
@@ -109,7 +127,9 @@ export async function run() {
       return 1;
     }
 
-    await executeCommand(context);
+    contexts.forEach(async context =>{
+      await executeCommand(context);
+    });
 
     const exitCode = process.exitCode || 0;
 

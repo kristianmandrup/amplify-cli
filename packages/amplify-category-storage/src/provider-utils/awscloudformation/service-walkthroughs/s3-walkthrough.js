@@ -1165,7 +1165,7 @@ export const checkIfAuthExists = context => {
 
 export const migrate = (context, projectPath, resourceName) => {
   const { getBackendDirPathForProject } = context.pathManager
-  const resourceDirPath = getBackendDirPathForProject(projectPath, category, resourceName));
+  const resourceDirPath = getBackendDirPathForProject(projectPath, category, resourceName);
 
   // Change CFN file
 

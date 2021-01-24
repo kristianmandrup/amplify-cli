@@ -4,6 +4,7 @@ const os = require('os');
 const ini = require('ini');
 const { spawn } = require('child_process');
 const inquirer = require('inquirer');
+const { constructContext } = require('@aws-amplify/cli');
 
 const amplify = /^win/.test(process.platform) ? 'amplify.cmd' : 'amplify';
 const dotAWSDirPath = path.normalize(path.join(os.homedir(), '.aws'));

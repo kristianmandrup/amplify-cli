@@ -2,11 +2,13 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 
 export const getAmplifyRc = (opts: any = {}): any => {
-  const localAmplifyRcPath = path.join('.amplifyrc.json');
-  const existingApp = fs.existsSync(localAmplifyRcPath);
+  const projectPath = opts.projectPath || process.cwd()
+  const localAmplifyRcPath = '.amplifyrc.json';
   const amplifyRcFilePath = opts.amplifyrcPath || localAmplifyRcPath;
-  if (existingApp === true) {
-    const fileContent: string = fs.readFileSync(amplifyRcFilePath, 'utf8');
+  const amplifyRcFullPath = path.join(projectPath, amplifyRcFilePath)
+  const existingApp = fs.existsSync(amplifyRcFullPath);
+  if (existingApp) {
+    const fileContent: string = fs.readFileSync(amplifyRcFullPath, 'utf8');
     const amplifyRc = JSON.parse(fileContent);
     return amplifyRc;
   }

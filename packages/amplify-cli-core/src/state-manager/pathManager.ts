@@ -42,11 +42,19 @@ export const PathConstants = {
 
 export class PathManager {
   private readonly homeDotAmplifyDirPath: string;
-  // private readonly projectRootPath: string | undefined;
+  private _projectRootPath: string | undefined;
 
   constructor() {
     this.homeDotAmplifyDirPath = path.join(homedir(), this.pathConstants.DotAmplifyDirName);
-    // this.projectRootPath = this.findProjectRoot();
+    this._projectRootPath = this.findProjectRoot();
+  }
+
+  set projectRootPath(projectRootPath) {
+    this._projectRootPath = projectRootPath;
+  }
+
+  get projectRootPath() {
+    return this._projectRootPath;
   }
 
   private _pathConstants = PathConstants;
@@ -59,10 +67,10 @@ export class PathManager {
     this._pathConstants = pathConstants;
   }
 
-  set extendPathConstants(paths) {
+  set extendPathConstants(paths: any) {
     this._pathConstants = {
       ...this.pathConstants,
-      paths,
+      ...paths || {},
     };
   }
 
@@ -89,7 +97,7 @@ export class PathManager {
     return path.join(this.getAmplifyDirPath(), ...paths);
   }
 
-  getAmplifyDirPathForProject(projectPath, ...paths) {
+  getAmplifyDirPathForProject(projectPath: string, ...paths: string[]) {
     return path.join(this.getAmplifyDirPath(projectPath), ...paths);
   }
 
@@ -99,11 +107,11 @@ export class PathManager {
   getBackendDirPath = (projectPath?: string): string =>
     this.constructPath(projectPath, [this.pathConstants.AmplifyDirName, this.pathConstants.BackendDirName]);
 
-  getBackendDirPathFor(...paths) {
+  getBackendDirPathFor(...paths: string[]) {
     return path.join(this.getBackendDirPath(), ...paths);
   }
 
-  getBackendDirPathForProject(projectPath, ...paths) {
+  getBackendDirPathForProject(projectPath: string, ...paths: string[]) {
     return path.join(this.getBackendDirPath(projectPath), ...paths);
   }
 
