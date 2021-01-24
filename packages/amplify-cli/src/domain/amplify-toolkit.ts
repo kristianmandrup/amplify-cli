@@ -4,7 +4,6 @@ import { Context } from './context';
 import { getAmplifyRc } from './amplify-rc';
 
 export class AmplifyToolkit {
-  private _projectPath: string;
   private _options: any;
   private _buildResources: any;
   private _confirmPrompt: any;
@@ -226,9 +225,11 @@ export class AmplifyToolkit {
   }
 
   get paths(): any {
-    this._paths = this._paths || new PathManager();
-    this._paths.projectRootPath = this._projectPath
     return this._paths;
+  }
+
+  initPaths() {
+    this._paths = this._paths || new PathManager();
   }
 
   get pathManager(): any {
@@ -488,8 +489,8 @@ export class AmplifyToolkit {
   constructor(options: any = {}) {
     const rcOptions = getAmplifyRc(options);
     options = rcOptions;
-    this._projectPath = options.projectPath;
     this._options = options;
+    this.initPaths()
 
     if (options.amplifyHelpersDirPath) {
       this.amplifyHelpersDirPath = options.amplifyHelpersDirPath;
@@ -497,6 +498,7 @@ export class AmplifyToolkit {
     if (options.paths) {
       options.paths.projectPath = options.paths.projectPath || options.projectPath
       this.paths.extendPathConstants(options.paths);
+      this.paths.projectRootPath = options.paths.projectPath;
     }
     this._cleanUpTasks = new Array();
   }

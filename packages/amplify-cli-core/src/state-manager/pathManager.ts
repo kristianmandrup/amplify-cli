@@ -9,6 +9,7 @@ export const PathConstants = {
   AWSConfig: 'config',
   DeploymentSecretsFileName: 'deployment-secrets.json',
   AmplifyAdminDirName: 'admin',
+  AmplifyRcJsonFileName: '.amplifyrc.json',
 
   // in project root
   AmplifyDirName: 'amplify',
@@ -206,6 +207,8 @@ export class PathManager {
 
   getAWSConfigFilePath = (): string => path.normalize(path.join(this.getDotAWSDirPath(), this.pathConstants.AWSConfig));
 
+  getAmplifyRcJsonFileName = (): string => path.normalize(path.join(homedir(), this.pathConstants.AmplifyRcJsonFileName));
+
   getCLIJSONFilePath = (projectPath: string, env?: string): string => {
     const fileName = env === undefined ? this.pathConstants.CLIJSONFileName : this.pathConstants.CLIJsonWithEnvironmentFileName(env);
 
@@ -219,9 +222,7 @@ export class PathManager {
     path.normalize(path.join(this.getDotAWSAmplifyDirPath(), this.pathConstants.DeploymentSecretsFileName));
 
   private constructPath = (projectPath?: string, segments: string[] = []): string => {
-    if (!projectPath) {
-      projectPath = this.findProjectRoot();
-    }
+    projectPath = projectPath || this.projectRootPath || this.findProjectRoot();
 
     if (projectPath) {
       return path.normalize(path.join(projectPath, ...segments));

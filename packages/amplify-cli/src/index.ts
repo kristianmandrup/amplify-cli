@@ -36,15 +36,18 @@ import { logInput } from './conditional-local-logging-init';
 
 EventEmitter.defaultMaxListeners = 1000;
 
-function getContexts(pluginPlatform, input, projectPath) {
+function getContexts(pluginPlatform, input, context) {
   try {
-    const contextsFilePath = path.join(projectPath, 'amplify-contexts.json')
-    const content = fs.readFileSync(projectPath, 'utf-8');
+    const { getAmplifyRcFilePath } = context.pathManager;
+    const contextsFilePath = getAmplifyRcFilePath()
+    const content = fs.readFileSync(contextsFilePath, 'utf-8');
     if (content) {
       const json = JSON.parse(content);
       const contextPaths = json.contextPaths || [];
-      input.options.projectPath = projectPath
-      return contextPaths.map(contextPath => constructContext(pluginPlatform, input))
+      return contextPaths.map(projectPath => {
+        input.options.projectPath = projectPath
+        constructContext(pluginPlatform, input)
+      })
     }
   } catch {
     return null;
@@ -102,7 +105,7 @@ export async function run() {
     });
 
     // process.chdir(projectPath);
-    const contexts = getContexts(pluginPlatform, input, projectPath) || [context]
+    const contexts = getContexts(pluginPlatform, input, context) || [context]
 
     const useNewDefaults = !stateManager.projectConfigExists(projectPath);
 
@@ -127,9 +130,10 @@ export async function run() {
       return 1;
     }
 
-    contexts.forEach(async context =>{
+    const promises = contexts.forEach(async context =>{
       await executeCommand(context);
     });
+    Promise.all(promises)
 
     const exitCode = process.exitCode || 0;
 
