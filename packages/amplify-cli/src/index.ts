@@ -45,8 +45,9 @@ function getContexts(pluginPlatform, input, context) {
       const json = JSON.parse(content);
       const contextPaths = json.contextPaths || [];
       return contextPaths.map(projectPath => {
-        input.options.projectPath = projectPath
-        constructContext(pluginPlatform, input)
+        input.options.projectPath = projectPath;
+        input.options.contextType = 'multi';
+        return constructContext(pluginPlatform, input)
       })
     }
   } catch {
@@ -131,6 +132,9 @@ export async function run() {
     }
 
     const promises = contexts.forEach(async context =>{
+      if (context.contextType === 'multi' && !context.domain) {
+        throw 'Invalid context - missing domain'
+      }
       await executeCommand(context);
     });
     Promise.all(promises)

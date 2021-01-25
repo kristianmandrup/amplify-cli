@@ -6,8 +6,11 @@ import { IUsageData } from './amplify-usageData';
 export class Context {
   amplify: AmplifyToolkit;
   usageData!: IUsageData;
+  contextType: string | undefined
+
   constructor(public pluginPlatform: PluginPlatform, public input: Input) {
     this.amplify = new AmplifyToolkit(input.options);
+    this.contextType = "" + (input.options || {}).contextType;
   }
 
   // ToDo: this is to attach gluegun extensions and other attached properties
