@@ -5,6 +5,7 @@ import { supportedServices } from '../supported-services';
 import { ServiceName, provider, parametersFileName } from './utils/constants';
 import { category as categoryName } from '../../constants';
 import {
+  createNamespacedFunctionResources,
   createFunctionResources,
   saveMutableState,
   saveCFNParameters,
@@ -99,7 +100,9 @@ export async function addFunctionResource(
     completeParams = parameters;
   }
 
-  createFunctionResources(context, completeParams);
+  const hasNamespaces = context.namespaces && context.namespaces.length > 0
+  const createResourcesFn = hasNamespaces ? createNamespacedFunctionResources : createFunctionResources
+  createResourcesFn(context, completeParams);
 
   if (!completeParams.skipEdit) {
     await openEditor(context, category, completeParams.resourceName, completeParams.functionTemplate);

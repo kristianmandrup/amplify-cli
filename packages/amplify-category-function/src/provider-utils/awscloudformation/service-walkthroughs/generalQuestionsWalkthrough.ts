@@ -15,6 +15,17 @@ function generalQuestions(context: any): object[] {
   return [
     {
       type: 'input',
+      name: 'functionNamespace',
+      message: 'Provide an optional namespace:',
+      validate: context.amplify.inputValidation({
+        operator: 'regex',
+        value: '^[a-zA-Z0-9._-]+$',
+        onErrorMsg: 'You can use the following characters: a-z A-Z 0-9 . - _',
+        required: false,
+      }),
+    },
+    {
+      type: 'input',
       name: 'functionName',
       message: 'Provide an AWS Lambda function name:',
       validate: context.amplify.inputValidation({

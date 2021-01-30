@@ -31,6 +31,12 @@ import {
 } from '../utils/permissionMapUtils';
 import { JSONUtilities } from 'amplify-cli-core';
 
+const resourceNameFor = (opts) => {
+  const { functionNamespace, functionName } = opts
+  const ns = functionNamespace ? `ns-${functionNamespace}` : undefined
+  return ns ? [ns, functionName].join('-') : functionName
+}
+
 /**
  * Starting point for CLI walkthrough that generates a lambda function
  * @param context The Amplify Context object
@@ -45,7 +51,7 @@ export async function createWalkthrough(
   // ask generic function questions and merge in results
   templateParameters = merge(templateParameters, await generalQuestionsWalkthrough(context));
   if (templateParameters.functionName) {
-    templateParameters.resourceName = templateParameters.functionName;
+    templateParameters.resourceName = resourceNameFor(templateParameters)
   }
 
   // ask runtime selection questions and merge in results

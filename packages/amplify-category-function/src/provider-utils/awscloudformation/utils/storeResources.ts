@@ -10,6 +10,24 @@ import { isMultiEnvLayer, LayerParameters, StoredLayerParameters } from './layer
 import { convertLambdaLayerMetaToLayerCFNArray } from './layerArnConverter';
 import { saveLayerRuntimes } from './layerRuntimes';
 
+export function createNamespacedFunctionResources(context: any, parameters: FunctionParameters | FunctionTriggerParameters) {
+  const { namespaces } = context
+  for (let namespace of namespaces) {
+    const resourceName = `ns-${namespace}` + (parameters.resourceName || parameters.functionName)
+    context.amplify.updateamplifyMetaAfterResourceAdd(
+      categoryName,
+      resourceName,
+      translateFuncParamsToResourceOpts(parameters),
+    );
+
+    // copy template, CFN and parameter files
+    copyTemplateFiles(context, parameters, resourceName);
+    saveMutableState(context, parameters, resourceName);
+    saveCFNParameters(context, parameters, resourceName);
+    context.amplify.leaveBreadcrumbs(context, categoryName, resourceName, createBreadcrumbs(parameters));
+  }
+}
+
 // handling both FunctionParameters and FunctionTriggerParameters here is a hack
 // ideally we refactor the auth trigger flows to use FunctionParameters directly and get rid of FunctionTriggerParameters altogether
 export function createFunctionResources(context: any, parameters: FunctionParameters | FunctionTriggerParameters) {
@@ -76,11 +94,12 @@ export function saveMutableState(
   parameters:
     | Partial<Pick<FunctionParameters, 'mutableParametersState' | 'resourceName' | 'lambdaLayers' | 'functionName'>>
     | FunctionTriggerParameters,
+  resourceName?: string
 ) {
   createParametersFile(
     context,
     buildParametersFileObj(parameters),
-    parameters.resourceName || parameters.functionName,
+    resourceName || parameters.resourceName || parameters.functionName,
     functionParametersFileName,
   );
 }
@@ -89,19 +108,21 @@ export function saveMutableState(
 export function saveCFNParameters(
   context,
   parameters: Partial<Pick<FunctionParameters, 'cloudwatchRule' | 'resourceName'>> | FunctionTriggerParameters,
+  resourceName?: string
 ) {
+  resourceName = resourceName || parameters.resourceName
   if ('trigger' in parameters) {
     const params = {
       modules: parameters.modules.join(),
-      resourceName: parameters.resourceName,
+      resourceName: resourceName,
     };
-    createParametersFile(context, params, parameters.resourceName, parametersFileName);
+    createParametersFile(context, params, resourceName, parametersFileName);
   }
   if ('cloudwatchRule' in parameters) {
     const params = {
       CloudWatchRule: parameters.cloudwatchRule,
     };
-    createParametersFile(context, params, parameters.resourceName, parametersFileName);
+    createParametersFile(context, params, resourceName, parametersFileName);
   }
 }
 
@@ -114,7 +135,7 @@ function updateLayerState(context: any, parameters: LayerParameters, layerDirPat
   }
 }
 
-function copyTemplateFiles(context: any, parameters: FunctionParameters | FunctionTriggerParameters) {
+function copyTemplateFiles(context: any, parameters: FunctionParameters | FunctionTriggerParameters, resourceName?: string) {
   // copy function template files
   const destDir = context.amplify.pathManager.getBackendDirPath();
   const copyJobs = parameters.functionTemplate.sourceFiles.map(file => {
@@ -124,7 +145,7 @@ function copyTemplateFiles(context: any, parameters: FunctionParameters | Functi
       target: path.join(
         destDir,
         categoryName,
-        parameters.resourceName,
+        resourceName || parameters.resourceName,
         _.get(parameters.functionTemplate.destMap, file, file.replace(/\.ejs$/, '')),
       ),
     };
