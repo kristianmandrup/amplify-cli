@@ -131,13 +131,12 @@ export async function run() {
       return 1;
     }
 
-    const promises = contexts.forEach(async context =>{
+    for (let context of contexts) {
       if (context.contextType === 'multi' && !context.domain) {
         throw 'Invalid context - missing domain'
       }
       await executeCommand(context);
-    });
-    Promise.all(promises)
+    };
 
     const exitCode = process.exitCode || 0;
 

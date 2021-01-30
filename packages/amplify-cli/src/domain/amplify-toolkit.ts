@@ -226,10 +226,9 @@ export class AmplifyToolkit {
 
   filterResource(resource) {
     if (!this.contextDomain) return true
-    const nameMatch = resource.resourceName.startsWith(this.contextDomain + "-")
-    const resourceDomain = (resource.Properties || {}).DomainName
-    const matchesDomainNameProp = this.contextDomain == resourceDomain
-    return nameMatch || matchesDomainNameProp
+    const tags = resource.Properties.Tags || []
+    const resourceDomain = tags.find(tag => tag.Key === "DomainName" && tag.Value)
+    return  this.contextDomain == resourceDomain
   }
 
   get paths(): any {
