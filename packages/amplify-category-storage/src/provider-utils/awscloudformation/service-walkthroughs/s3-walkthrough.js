@@ -465,7 +465,12 @@ async function configure(context, defaultValuesFilename, serviceMetadata, resour
       props = { ...defaultValues, ...options };
     }
     // Generate CFN file on add
-    await copyCfnTemplate(context, category, resource, props);
+    const hasNamespaces = context.namespaces && context.namespaces.length > 0
+    if (hasNamespaces) {
+      await copyNamespacedCfnTemplates(context, category, resource, props);
+    } else {
+      await copyCfnTemplate(context, category, resource, props);
+    }
   }
 
   delete defaultValues.resourceName;
@@ -485,6 +490,15 @@ async function configure(context, defaultValuesFilename, serviceMetadata, resour
   fs.writeFileSync(storageParamsFilePath, storageParamsString, 'utf8');
 
   return resource;
+}
+
+async function copyNamespacedCfnTemplates(context, categoryName, resourceName, options) {
+  const { namespaces } = context
+  for (let namespace of namespaces) {
+    resourceName = [namespace, '-', resourceName].join()
+    options.resourceName = "s3" + resourceName
+    await copyCfnTemplate(context, categoryName, resourceName, options)
+  }
 }
 
 async function copyCfnTemplate(context, categoryName, resourceName, options) {
