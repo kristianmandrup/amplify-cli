@@ -137,6 +137,7 @@ function updateLayerState(context: any, parameters: LayerParameters, layerDirPat
 
 function copyTemplateFiles(context: any, parameters: FunctionParameters | FunctionTriggerParameters, resourceName?: string) {
   // copy function template files
+  resourceName = resourceName || parameters.resourceName
   const destDir = context.amplify.pathManager.getBackendDirPath();
   const copyJobs = parameters.functionTemplate.sourceFiles.map(file => {
     return {
@@ -145,7 +146,7 @@ function copyTemplateFiles(context: any, parameters: FunctionParameters | Functi
       target: path.join(
         destDir,
         categoryName,
-        resourceName || parameters.resourceName,
+        resourceName,
         _.get(parameters.functionTemplate.destMap, file, file.replace(/\.ejs$/, '')),
       ),
     };
@@ -172,7 +173,7 @@ function copyTemplateFiles(context: any, parameters: FunctionParameters | Functi
   const cloudTemplateJob = {
     dir: '',
     template: parameters.cloudResourceTemplatePath,
-    target: path.join(destDir, categoryName, parameters.resourceName, `${parameters.resourceName}-cloudformation-template.json`),
+    target: path.join(destDir, categoryName, resourceName, `${resourceName}-cloudformation-template.json`),
   };
 
   const copyJobParams: any = parameters;
